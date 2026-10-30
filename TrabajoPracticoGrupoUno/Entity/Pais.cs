@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Entity
 {
-    internal class Pais
+    public class Pais
     {
+        public int IdPais { get; set; }
+
+        public string Nombre { get; set; } = string.Empty;
+
+        public bool Activo { get; set; } = true;
     }
 }

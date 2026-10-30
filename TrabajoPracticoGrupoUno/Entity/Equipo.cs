@@ -4,7 +4,14 @@ using System.Text;
 
 namespace Entity
 {
-    internal class Equipo
+    public class Equipo
     {
+        public int IdEquipo { get; set; }
+
+        public string Nombre { get; set; } = string.Empty;
+
+        public DateTime FechaFundacion { get; set; }
+
+        public bool Activo { get; set; } = true;
     }
 }

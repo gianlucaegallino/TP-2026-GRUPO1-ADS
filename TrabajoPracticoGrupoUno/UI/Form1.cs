@@ -163,13 +163,5 @@ namespace ParcialUnoGallino
             }
         }
 
-        public void ValidarImporte(double importe)
-        {
-            if (importe <= 0)
-            {
-                throw new Exception("El importe debe ser mayor a 0");
-
-            }
-        }
     }
 }

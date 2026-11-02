@@ -7,7 +7,7 @@ namespace BLL
     {
         private TipoBicicletaDAL TipoBicicletaDal = new();
 
-        public List<TipoBicicleta> obtenerTipoBicicletas()
+        /*public List<TipoBicicleta> obtenerTipoBicicletas()
         {
             try
             {
@@ -17,7 +17,7 @@ namespace BLL
             {
                 throw;
             }
-        }
+        }*/
 
     }
 }

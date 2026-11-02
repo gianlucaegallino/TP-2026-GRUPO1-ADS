@@ -8,7 +8,7 @@ namespace ParcialUnoGallino
         private AlquilerBusiness alquilerBusiness = new();
         private TipoBicicletaBusiness tipoBicicletaBusiness = new();
 
-        private List<Alquiler> borrador = new();
+        /*private List<Alquiler> borrador = new();
 
         public Form1()
         {
@@ -170,6 +170,6 @@ namespace ParcialUnoGallino
                 throw new Exception("El importe debe ser mayor a 0");
 
             }
-        }
+        } */
     }
 }

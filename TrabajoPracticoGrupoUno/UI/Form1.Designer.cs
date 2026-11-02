@@ -138,7 +138,7 @@
             btnAgregarAlquiler.TabIndex = 9;
             btnAgregarAlquiler.Text = "Agregar Alquiler a lista";
             btnAgregarAlquiler.UseVisualStyleBackColor = true;
-            btnAgregarAlquiler.Click += btnAgregarAlquiler_Click;
+
             // 
             // label8
             // 
@@ -184,7 +184,6 @@
             btnModificarAlquiler.TabIndex = 14;
             btnModificarAlquiler.Text = "Modificar Alquiler";
             btnModificarAlquiler.UseVisualStyleBackColor = true;
-            btnModificarAlquiler.Click += btnModificarAlquiler_Click;
             // 
             // btnEliminarAlquiler
             // 
@@ -194,7 +193,7 @@
             btnEliminarAlquiler.TabIndex = 15;
             btnEliminarAlquiler.Text = "Eliminar Alquiler";
             btnEliminarAlquiler.UseVisualStyleBackColor = true;
-            btnEliminarAlquiler.Click += btnEliminarAlquiler_Click;
+
             // 
             // cbIdEliminar
             // 
@@ -263,7 +262,7 @@
             btnCargardeLista.TabIndex = 24;
             btnCargardeLista.Text = "Cargar Lista";
             btnCargardeLista.UseVisualStyleBackColor = true;
-            btnCargardeLista.Click += btnCargarDeLista_Click;
+
             // 
             // Form1
             // 
@@ -297,7 +296,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
+
             ((System.ComponentModel.ISupportInitialize)dgvAlquileres).EndInit();
             ResumeLayout(false);
             PerformLayout();

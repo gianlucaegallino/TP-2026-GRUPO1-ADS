@@ -8,7 +8,7 @@ namespace Mapper
 {
     public static class PartidoMapper
     {
-        public static PartidoEntity MapToEntity(Entity.EFModel.Partido origen)
+        public static PartidoEntity MapToEntity(Partido origen)
         {
             if (origen == null) return null;
             return new PartidoEntity
@@ -24,10 +24,10 @@ namespace Mapper
             };
         }
 
-        public static Entity.EFModel.Partido MapToModel(PartidoEntity origen)
+        public static Partido MapToModel(PartidoEntity origen)
         {
             if (origen == null) return null;
-            return new Entity.EFModel.Partido
+            return new Partido
             {
                 IdPartido = origen.IdPartido,
                 IdTorneo = origen.IdTorneo,

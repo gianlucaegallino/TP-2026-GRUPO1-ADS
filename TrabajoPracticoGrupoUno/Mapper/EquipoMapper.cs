@@ -8,7 +8,7 @@ namespace Mapper
 {
     public static class EquipoMapper
     {
-        public static EquipoEntity MapToEntity(Entity.EFModel.Equipo origen)
+        public static EquipoEntity MapToEntity(Equipo origen)
         {
             if (origen == null) return null;
             return new EquipoEntity
@@ -21,10 +21,10 @@ namespace Mapper
             };
         }
 
-        public static Entity.EFModel.Equipo MapToModel(EquipoEntity origen)
+        public static Equipo MapToModel(EquipoEntity origen)
         {
             if (origen == null) return null;
-            return new Entity.EFModel.Equipo
+            return new Equipo
             {
                 IdEquipo = origen.IdEquipo,
                 Nombre = origen.Nombre,

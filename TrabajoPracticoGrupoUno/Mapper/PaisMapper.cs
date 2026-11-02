@@ -8,7 +8,7 @@ namespace Mapper
 {
     public static class PaisMapper
     {
-        public static Pais MapToEntity(Entity.EFModel.Pais origen)
+        public static Pais MapToEntity(Pais origen)
         {
             if (origen == null) return null;
             return new Pais
@@ -19,10 +19,10 @@ namespace Mapper
             };
         }
 
-        public static Entity.EFModel.Pais MapToModel(Pais origen)
+        public static Pais MapToModel(Pais origen)
         {
             if (origen == null) return null;
-            return new Entity.EFModel.Pais
+            return new Pais
             {
                 IdPais = origen.IdPais,
                 Nombre = origen.Nombre,

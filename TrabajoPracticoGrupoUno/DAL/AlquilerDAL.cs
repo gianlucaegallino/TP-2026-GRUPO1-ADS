@@ -1,5 +1,5 @@
 ﻿using Entity;
-//using Mapper;
+using Mapper;
 using Microsoft.Data.SqlClient;
 using System.Configuration;
 
@@ -9,7 +9,7 @@ namespace DAL
     {
         private TipoBicicletaDAL biciDal = new();
 
-       /* public void agregarAlquiler(Alquiler alquiler)
+        public void agregarAlquiler(Alquiler alquiler)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace DAL
                 throw;
             }
         }
-       */
+
 
     }
 }

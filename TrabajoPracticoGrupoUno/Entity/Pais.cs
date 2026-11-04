@@ -4,13 +4,11 @@ using System.Text;
 
 namespace Entity
 {
-    public class TorneoEntity
+    public class Pais
     {
-        public int IdTorneo { get; set; }
+        public int IdPais { get; set; }
 
         public string Nombre { get; set; } = string.Empty;
-
-        public int Año { get; set; }
 
         public bool Activo { get; set; } = true;
     }

@@ -4,11 +4,13 @@ using System.Text;
 
 namespace Entity
 {
-    public class PaisEntity
+    public class Equipo
     {
-        public int IdPais { get; set; }
+        public int IdEquipo { get; set; }
 
         public string Nombre { get; set; } = string.Empty;
+
+        public DateTime FechaFundacion { get; set; }
 
         public bool Activo { get; set; } = true;
     }

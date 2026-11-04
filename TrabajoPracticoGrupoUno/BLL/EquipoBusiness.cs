@@ -8,7 +8,7 @@ namespace BLL
     {
         private AlquilerDAL AlquilerDal = new();
 
-       /* public void agregarAlquiler(Alquiler alquiler)
+        public void agregarAlquiler(Alquiler alquiler)
         {
             try
             {
@@ -168,6 +168,5 @@ namespace BLL
                 throw new Exception("No hay un alquiler con ese ID");
             }
         }
-       */
     }
 }

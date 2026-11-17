@@ -4,22 +4,26 @@ using System.Transactions;
 
 namespace BLL
 {
-    public class AlquilerBusiness
+    public class EquipoBusiness
     {
-        private AlquilerDAL AlquilerDal = new();
+        private EquipoDAL EquipoDal = new();
 
-       /* public void agregarAlquiler(Alquiler alquiler)
+        public void add(EquipoEntity tempEntity)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    ValidarDNI(alquiler);
-                    ValidarFecha(alquiler.FechaAlquiler);
-                    ValidarTipoBicicleta(alquiler);
-                    ValidarImporte(alquiler.ImporteTotal);
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
 
-                    AlquilerDal.agregarAlquiler(alquiler);
+                    // Validaciones
+                    ValidarNombre(tempEntity.Nombre);
+                    ValidarInexistenciaPorNombre(tempEntity.Nombre, 0);
+                    ValidarFechaFundacion(tempEntity.FechaFundacion);
+
+                    tempEntity.Activo = true;
+
+                    EquipoDal.add(tempEntity);
                     trx.Complete();
                 }
             }
@@ -29,37 +33,44 @@ namespace BLL
             }
         }
 
-
-        public void GuardarAlquileres(List<Alquiler> borrador)
+        public void update(EquipoEntity tempEntity)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    foreach (Alquiler emp in borrador)
-                    {
-                        this.agregarAlquiler(emp);
-                    }
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
+
+                    ValidarIdSeleccionado(tempEntity.IdEquipo);
+                    ValidarExistenciaPorID(tempEntity.IdEquipo);
+                    ValidarNombre(tempEntity.Nombre);
+                    ValidarInexistenciaPorNombre(tempEntity.Nombre, tempEntity.IdEquipo);
+                    ValidarFechaFundacion(tempEntity.FechaFundacion);
+
+                    EquipoDal.update(tempEntity);
                     trx.Complete();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-
-        public void eliminarAlquiler(int idAlquiler)
+        // Activa si estaba inactivo, desactiva si estaba activo
+        public void cambiarEstado(int id)
         {
             try
             {
+                using (var trx = new TransactionScope())
+                {
+                    ValidarIdSeleccionado(id);
+                    ValidarExistenciaPorID(id);
 
-
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-
-                AlquilerDal.eliminarAlquiler(idAlquiler);
+                    EquipoEntity actual = getById(id);
+                    EquipoDal.cambiarEstado(id, !actual.Activo);
+                    trx.Complete();
+                }
             }
             catch (Exception)
             {
@@ -67,29 +78,11 @@ namespace BLL
             }
         }
 
-        public void modificarAlquiler(int idAlquiler, double nuevoImporte, DateTime nuevaFechaAlquiler)
+        public List<EquipoEntity> getAll()
         {
             try
             {
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-                ValidarImporte(nuevoImporte);
-                ValidarFecha(nuevaFechaAlquiler);
-
-
-                AlquilerDal.modificarAlquiler(idAlquiler, nuevoImporte, nuevaFechaAlquiler);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private Alquiler obtenerAlquilerPorId(int idAlquiler)
-        {
-            try
-            {
-                return AlquilerDal.obtenerAlquilerPorId(idAlquiler);
+                return EquipoDal.getAll();
             }
             catch (Exception ex)
             {
@@ -97,11 +90,11 @@ namespace BLL
             }
         }
 
-        public List<Alquiler> obtenerAlquileres()
+        public List<EquipoEntity> getActivos()
         {
             try
             {
-                return AlquilerDal.obtenerAlquileres();
+                return EquipoDal.getActivos();
             }
             catch (Exception ex)
             {
@@ -109,65 +102,72 @@ namespace BLL
             }
         }
 
-        // validaciones de aca para abajo
-
-        public void ValidarDNI(Alquiler alquiler)
+        public EquipoEntity getById(int id)
         {
-            string dni = (alquiler.DniCliente ?? string.Empty).Trim();
-
-            if (String.IsNullOrEmpty(dni))
+            try
             {
-                throw new Exception("El numero de DNI no puede estar vacio.");
+                return EquipoDal.getById(id);
             }
-
-            if (dni.Length < 5)
+            catch (Exception ex)
             {
-                throw new Exception("El DNI debe tener mas de 5 caracteres.");
+                throw;
             }
         }
 
-        public void ValidarFecha(DateTime fecha)
+        public EquipoEntity getByNombre(string nombre)
         {
-            if (fecha.CompareTo(DateTime.Now) < 0)
+            try
             {
-                throw new Exception("La fecha no puede ser menor a ala ctual.");
+                return EquipoDal.getByNombre(nombre);
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
-        public void ValidarTipoBicicleta(Alquiler alquiler)
-        {
-            if (alquiler.TipoBicicleta.IdTipoBicicleta == 0)
-            {
-                throw new Exception("Debe haber un tipo de bicicleta seleccionado");
+        //VALIDACIONES
 
+        public void ValidarNombre(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre) || nombre.Length > 50)
+            {
+                throw new Exception("El nombre del equipo debe tener entre uno y cincuenta caracteres.");
             }
         }
 
-        public void ValidarImporte(double importe)
+        // idActual = 0 al agregar; al modificar se pasa el id para que no choque consigo mismo
+        public void ValidarInexistenciaPorNombre(string nombre, int idActual)
         {
-            if (importe <= 0)
+            EquipoEntity existente = getByNombre(nombre);
+            if (existente != null && existente.IdEquipo != idActual)
             {
-                throw new Exception("El importe debe ser mayor a 0");
-
+                throw new Exception("Ya existe un equipo con ese nombre.");
             }
         }
 
-        public void ValidarIdAlquiler(int id)
+        public void ValidarFechaFundacion(DateTime fecha)
+        {
+            if (fecha.Date > DateTime.Today)
+            {
+                throw new Exception("La fecha de fundacion no puede ser futura.");
+            }
+        }
+
+        public void ValidarIdSeleccionado(int id)
         {
             if (id <= 0)
             {
-                throw new Exception("El id debe ser un entero mayor a 0");
+                throw new Exception("Debe seleccionar un equipo de la grilla.");
             }
         }
 
-        public void ValidarExisteAlquiler(int idAlquiler)
+        public void ValidarExistenciaPorID(int id)
         {
-            Alquiler alqtemp = obtenerAlquilerPorId(idAlquiler);
-            if (alqtemp == null)
+            if (getById(id) == null)
             {
-                throw new Exception("No hay un alquiler con ese ID");
+                throw new Exception("El equipo no existe.");
             }
         }
-       */
     }
 }

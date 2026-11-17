@@ -4,22 +4,32 @@ using System.Transactions;
 
 namespace BLL
 {
-    public class AlquilerBusiness
+    public class PartidoBusiness
     {
-        private AlquilerDAL AlquilerDal = new();
+        private PartidoDAL PartidoDal = new();
+        private TorneoBusiness TorneoBusiness = new();
+        private EquipoBusiness EquipoBusiness = new();
 
-        public void agregarAlquiler(Alquiler alquiler)
+        // resultadoCargado = false -> el partido queda sin resultado (goles en NULL), se ignoran los goles de la entidad
+        public void add(PartidoEntity tempEntity, bool resultadoCargado)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    ValidarDNI(alquiler);
-                    ValidarFecha(alquiler.FechaAlquiler);
-                    ValidarTipoBicicleta(alquiler);
-                    ValidarImporte(alquiler.ImporteTotal);
+                    // Validaciones
+                    ValidarTorneoSeleccionado(tempEntity.IdTorneo);
+                    ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
+                    ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
+                    ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
+                    ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
+                    if (resultadoCargado) ValidarGoles(tempEntity.GolesLocal, tempEntity.GolesVisitante);
 
-                    AlquilerDal.agregarAlquiler(alquiler);
+                    tempEntity.Activo = true;
+
+                    PartidoDal.add(tempEntity, resultadoCargado);
                     trx.Complete();
                 }
             }
@@ -29,37 +39,47 @@ namespace BLL
             }
         }
 
-
-        public void GuardarAlquileres(List<Alquiler> borrador)
+        public void update(PartidoEntity tempEntity, bool resultadoCargado)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    foreach (Alquiler emp in borrador)
-                    {
-                        this.agregarAlquiler(emp);
-                    }
+                    ValidarIdSeleccionado(tempEntity.IdPartido);
+                    ValidarExistenciaPorID(tempEntity.IdPartido);
+                    ValidarTorneoSeleccionado(tempEntity.IdTorneo);
+                    ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
+                    ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
+                    ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
+                    ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
+                    if (resultadoCargado) ValidarGoles(tempEntity.GolesLocal, tempEntity.GolesVisitante);
+
+                    PartidoDal.update(tempEntity, resultadoCargado);
                     trx.Complete();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-
-        public void eliminarAlquiler(int idAlquiler)
+        // Activa si estaba inactivo, desactiva si estaba activo
+        public void cambiarEstado(int id)
         {
             try
             {
+                using (var trx = new TransactionScope())
+                {
+                    ValidarIdSeleccionado(id);
+                    ValidarExistenciaPorID(id);
 
-
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-
-                AlquilerDal.eliminarAlquiler(idAlquiler);
+                    PartidoEntity actual = getById(id);
+                    PartidoDal.cambiarEstado(id, !actual.Activo);
+                    trx.Complete();
+                }
             }
             catch (Exception)
             {
@@ -67,29 +87,11 @@ namespace BLL
             }
         }
 
-        public void modificarAlquiler(int idAlquiler, double nuevoImporte, DateTime nuevaFechaAlquiler)
+        public List<PartidoEntity> getAll()
         {
             try
             {
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-                ValidarImporte(nuevoImporte);
-                ValidarFecha(nuevaFechaAlquiler);
-
-
-                AlquilerDal.modificarAlquiler(idAlquiler, nuevoImporte, nuevaFechaAlquiler);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private Alquiler obtenerAlquilerPorId(int idAlquiler)
-        {
-            try
-            {
-                return AlquilerDal.obtenerAlquilerPorId(idAlquiler);
+                return PartidoDal.getAll();
             }
             catch (Exception ex)
             {
@@ -97,11 +99,11 @@ namespace BLL
             }
         }
 
-        public List<Alquiler> obtenerAlquileres()
+        public List<PartidoEntity> getActivos()
         {
             try
             {
-                return AlquilerDal.obtenerAlquileres();
+                return PartidoDal.getActivos();
             }
             catch (Exception ex)
             {
@@ -109,63 +111,103 @@ namespace BLL
             }
         }
 
-        // validaciones de aca para abajo
-
-        public void ValidarDNI(Alquiler alquiler)
+        public PartidoEntity getById(int id)
         {
-            string dni = (alquiler.DniCliente ?? string.Empty).Trim();
-
-            if (String.IsNullOrEmpty(dni))
+            try
             {
-                throw new Exception("El numero de DNI no puede estar vacio.");
+                return PartidoDal.getById(id);
             }
-
-            if (dni.Length < 5)
+            catch (Exception ex)
             {
-                throw new Exception("El DNI debe tener mas de 5 caracteres.");
+                throw;
             }
         }
 
-        public void ValidarFecha(DateTime fecha)
+        public List<int> getIdsConResultado()
         {
-            if (fecha.CompareTo(DateTime.Now) < 0)
+            try
             {
-                throw new Exception("La fecha no puede ser menor a ala ctual.");
+                return PartidoDal.getIdsConResultado();
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
-        public void ValidarTipoBicicleta(Alquiler alquiler)
-        {
-            if (alquiler.TipoBicicleta.IdTipoBicicleta == 0)
-            {
-                throw new Exception("Debe haber un tipo de bicicleta seleccionado");
+        //VALIDACIONES
 
+        public void ValidarTorneoSeleccionado(int idTorneo)
+        {
+            if (idTorneo <= 0)
+            {
+                throw new Exception("Debe seleccionar un torneo.");
             }
         }
 
-        public void ValidarImporte(double importe)
+        public void ValidarExistenciaTorneoActivo(int idTorneo)
         {
-            if (importe <= 0)
+            TorneoEntity torneo = TorneoBusiness.getById(idTorneo);
+            if (torneo == null)
             {
-                throw new Exception("El importe debe ser mayor a 0");
-
+                throw new Exception("El torneo no existe.");
+            }
+            if (!torneo.Activo)
+            {
+                throw new Exception("El torneo seleccionado esta inactivo.");
             }
         }
 
-        public void ValidarIdAlquiler(int id)
+        public void ValidarEquipoSeleccionado(int idEquipo, string rol)
+        {
+            if (idEquipo <= 0)
+            {
+                throw new Exception($"Debe seleccionar el equipo {rol}.");
+            }
+        }
+
+        public void ValidarExistenciaEquipoActivo(int idEquipo, string rol)
+        {
+            EquipoEntity equipo = EquipoBusiness.getById(idEquipo);
+            if (equipo == null)
+            {
+                throw new Exception($"El equipo {rol} no existe.");
+            }
+            if (!equipo.Activo)
+            {
+                throw new Exception($"El equipo {rol} esta inactivo.");
+            }
+        }
+
+        public void ValidarEquiposDistintos(int idLocal, int idVisitante)
+        {
+            if (idLocal == idVisitante)
+            {
+                throw new Exception("El equipo local y el visitante deben ser distintos.");
+            }
+        }
+
+        public void ValidarGoles(int golesLocal, int golesVisitante)
+        {
+            if (golesLocal < 0 || golesLocal > 99 || golesVisitante < 0 || golesVisitante > 99)
+            {
+                throw new Exception("Los goles deben estar entre 0 y 99.");
+            }
+        }
+
+        public void ValidarIdSeleccionado(int id)
         {
             if (id <= 0)
             {
-                throw new Exception("El id debe ser un entero mayor a 0");
+                throw new Exception("Debe seleccionar un partido de la grilla.");
             }
         }
 
-        public void ValidarExisteAlquiler(int idAlquiler)
+        public void ValidarExistenciaPorID(int id)
         {
-            Alquiler alqtemp = obtenerAlquilerPorId(idAlquiler);
-            if (alqtemp == null)
+            if (getById(id) == null)
             {
-                throw new Exception("No hay un alquiler con ese ID");
+                throw new Exception("El partido no existe.");
             }
         }
     }

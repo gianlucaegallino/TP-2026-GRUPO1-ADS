@@ -8,10 +8,10 @@ namespace Mapper
 {
     public static class PaisMapper
     {
-        public static Pais MapToEntity(Pais origen)
+        public static PaisEntity MapToEntity(Pais origen)
         {
             if (origen == null) return null;
-            return new Pais
+            return new PaisEntity
             {
                 IdPais = origen.IdPais,
                 Nombre = origen.Nombre,
@@ -19,7 +19,7 @@ namespace Mapper
             };
         }
 
-        public static Pais MapToModel(Pais origen)
+        public static Pais MapToModel(PaisEntity origen)
         {
             if (origen == null) return null;
             return new Pais

@@ -4,22 +4,25 @@ using System.Transactions;
 
 namespace BLL
 {
-    public class AlquilerBusiness
+    public class PaisBusiness
     {
-        private AlquilerDAL AlquilerDal = new();
+        private PaisDAL PaisDal = new();
 
-        public void agregarAlquiler(Alquiler alquiler)
+        public void add(PaisEntity tempEntity)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    ValidarDNI(alquiler);
-                    ValidarFecha(alquiler.FechaAlquiler);
-                    ValidarTipoBicicleta(alquiler);
-                    ValidarImporte(alquiler.ImporteTotal);
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
 
-                    AlquilerDal.agregarAlquiler(alquiler);
+                    // Validaciones
+                    ValidarNombre(tempEntity.Nombre);
+                    ValidarInexistenciaPorNombre(tempEntity.Nombre, 0);
+
+                    tempEntity.Activo = true;
+
+                    PaisDal.add(tempEntity);
                     trx.Complete();
                 }
             }
@@ -29,37 +32,43 @@ namespace BLL
             }
         }
 
-
-        public void GuardarAlquileres(List<Alquiler> borrador)
+        public void update(PaisEntity tempEntity)
         {
             try
             {
                 using (var trx = new TransactionScope())
                 {
-                    foreach (Alquiler emp in borrador)
-                    {
-                        this.agregarAlquiler(emp);
-                    }
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
+
+                    ValidarIdSeleccionado(tempEntity.IdPais);
+                    ValidarExistenciaPorID(tempEntity.IdPais);
+                    ValidarNombre(tempEntity.Nombre);
+                    ValidarInexistenciaPorNombre(tempEntity.Nombre, tempEntity.IdPais);
+
+                    PaisDal.update(tempEntity);
                     trx.Complete();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-
-        public void eliminarAlquiler(int idAlquiler)
+        // Activa si estaba inactivo, desactiva si estaba activo
+        public void cambiarEstado(int id)
         {
             try
             {
+                using (var trx = new TransactionScope())
+                {
+                    ValidarIdSeleccionado(id);
+                    ValidarExistenciaPorID(id);
 
-
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-
-                AlquilerDal.eliminarAlquiler(idAlquiler);
+                    PaisEntity actual = getById(id);
+                    PaisDal.cambiarEstado(id, !actual.Activo);
+                    trx.Complete();
+                }
             }
             catch (Exception)
             {
@@ -67,29 +76,11 @@ namespace BLL
             }
         }
 
-        public void modificarAlquiler(int idAlquiler, double nuevoImporte, DateTime nuevaFechaAlquiler)
+        public List<PaisEntity> getAll()
         {
             try
             {
-                ValidarIdAlquiler(idAlquiler);
-                ValidarExisteAlquiler(idAlquiler);
-                ValidarImporte(nuevoImporte);
-                ValidarFecha(nuevaFechaAlquiler);
-
-
-                AlquilerDal.modificarAlquiler(idAlquiler, nuevoImporte, nuevaFechaAlquiler);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private Alquiler obtenerAlquilerPorId(int idAlquiler)
-        {
-            try
-            {
-                return AlquilerDal.obtenerAlquilerPorId(idAlquiler);
+                return PaisDal.getAll();
             }
             catch (Exception ex)
             {
@@ -97,11 +88,11 @@ namespace BLL
             }
         }
 
-        public List<Alquiler> obtenerAlquileres()
+        public List<PaisEntity> getActivos()
         {
             try
             {
-                return AlquilerDal.obtenerAlquileres();
+                return PaisDal.getActivos();
             }
             catch (Exception ex)
             {
@@ -109,63 +100,63 @@ namespace BLL
             }
         }
 
-        // validaciones de aca para abajo
-
-        public void ValidarDNI(Alquiler alquiler)
+        public PaisEntity getById(int id)
         {
-            string dni = (alquiler.DniCliente ?? string.Empty).Trim();
-
-            if (String.IsNullOrEmpty(dni))
+            try
             {
-                throw new Exception("El numero de DNI no puede estar vacio.");
+                return PaisDal.getById(id);
             }
-
-            if (dni.Length < 5)
+            catch (Exception ex)
             {
-                throw new Exception("El DNI debe tener mas de 5 caracteres.");
+                throw;
             }
         }
 
-        public void ValidarFecha(DateTime fecha)
+        public PaisEntity getByNombre(string nombre)
         {
-            if (fecha.CompareTo(DateTime.Now) < 0)
+            try
             {
-                throw new Exception("La fecha no puede ser menor a ala ctual.");
+                return PaisDal.getByNombre(nombre);
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
-        public void ValidarTipoBicicleta(Alquiler alquiler)
-        {
-            if (alquiler.TipoBicicleta.IdTipoBicicleta == 0)
-            {
-                throw new Exception("Debe haber un tipo de bicicleta seleccionado");
+        //VALIDACIONES
 
+        public void ValidarNombre(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre) || nombre.Length > 50)
+            {
+                throw new Exception("El nombre del pais debe tener entre uno y cincuenta caracteres.");
             }
         }
 
-        public void ValidarImporte(double importe)
+        // idActual = 0 al agregar; al modificar se pasa el id para que no choque consigo mismo
+        public void ValidarInexistenciaPorNombre(string nombre, int idActual)
         {
-            if (importe <= 0)
+            PaisEntity existente = getByNombre(nombre);
+            if (existente != null && existente.IdPais != idActual)
             {
-                throw new Exception("El importe debe ser mayor a 0");
-
+                throw new Exception("Ya existe un pais con ese nombre.");
             }
         }
 
-        public void ValidarIdAlquiler(int id)
+        public void ValidarIdSeleccionado(int id)
         {
             if (id <= 0)
             {
-                throw new Exception("El id debe ser un entero mayor a 0");
+                throw new Exception("Debe seleccionar un pais de la grilla.");
             }
         }
 
-        public void ValidarExisteAlquiler(int idAlquiler)
+        public void ValidarExistenciaPorID(int id)
         {
-            Alquiler alqtemp = obtenerAlquilerPorId(idAlquiler);
-            if (alqtemp == null)
+            if (getById(id) == null)
             {
-                throw new Exception("No hay un alquiler con ese ID");
+                throw new Exception("El pais no existe.");
             }
         }
     }

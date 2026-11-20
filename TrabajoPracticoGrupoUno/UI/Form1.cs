@@ -254,6 +254,8 @@ namespace UI
         // ====================================================================
         #region Pestaña Jugadores
 
+        private int idJugadorSeleccionado = 0;
+
         private void ConectarEventosJugador()
         {
             btnJugadorGuardar.Click += btnJugadorGuardar_Click;
@@ -262,41 +264,172 @@ namespace UI
             btnJugadorLimpiar.Click += btnJugadorLimpiar_Click;
             chkJugadorInactivos.CheckedChanged += chkJugadorInactivos_CheckedChanged;
             gridJugador.SelectionChanged += gridJugador_SelectionChanged;
+
+            // Al entrar a la pestaña Jugadores se recargan los combos,
+            // por si en Equipos o Países se agregó o desactivó algo.
+            pestanas.SelectedIndexChanged += pestanas_SelectedIndexChanged_Jugador;
         }
 
         private void CargarPestanaJugador()
         {
-            // TODO T12: cargar combos de Equipo y País + gridJugador
+            try
+            {
+                idJugadorSeleccionado = 0;
+
+                gridJugador.SelectionMode =
+                    DataGridViewSelectionMode.FullRowSelect;
+
+                gridJugador.MultiSelect = false;
+                gridJugador.ReadOnly = true;
+
+                CargarCombosJugador();
+
+                gridJugador.DataSource = null;
+
+                if (chkJugadorInactivos.Checked)
+                    gridJugador.DataSource = jugadorBusiness.getAll();
+                else
+                    gridJugador.DataSource = jugadorBusiness.getActivos();
+
+                LimpiarJugador();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
+        }
+
+        // Llena los combos solo con equipos y países activos.
+        private void CargarCombosJugador()
+        {
+            JugadorIdEquipo.DataSource = null;
+            JugadorIdEquipo.DataSource = equipoBusiness.getActivos();
+            JugadorIdEquipo.DisplayMember = "Nombre";
+            JugadorIdEquipo.ValueMember = "IdEquipo";
+
+            JugadorIdPais.DataSource = null;
+            JugadorIdPais.DataSource = paisBusiness.getActivos();
+            JugadorIdPais.DisplayMember = "Nombre";
+            JugadorIdPais.ValueMember = "IdPais";
         }
 
         private void btnJugadorGuardar_Click(object? sender, EventArgs e)
         {
-            // TODO T12
+            try
+            {
+                JugadorEntity jugador = LeerJugadorDeControles();
+
+                jugadorBusiness.add(jugador);
+
+                CargarPestanaJugador();
+
+                MostrarOk("Jugador guardado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnJugadorModificar_Click(object? sender, EventArgs e)
         {
-            // TODO T12
+            try
+            {
+                JugadorEntity jugador = LeerJugadorDeControles();
+                jugador.IdJugador = idJugadorSeleccionado;
+
+                jugadorBusiness.update(jugador);
+
+                CargarPestanaJugador();
+
+                MostrarOk("Jugador modificado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnJugadorEstado_Click(object? sender, EventArgs e)
         {
-            // TODO T12
+            try
+            {
+                jugadorBusiness.cambiarEstado(idJugadorSeleccionado);
+
+                CargarPestanaJugador();
+
+                MostrarOk("Estado actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnJugadorLimpiar_Click(object? sender, EventArgs e)
         {
-            // TODO T12
+            LimpiarJugador();
         }
 
-        private void chkJugadorInactivos_CheckedChanged(object? sender, EventArgs e)
+        private void chkJugadorInactivos_CheckedChanged(
+            object? sender, EventArgs e)
         {
-            // TODO T12
+            CargarPestanaJugador();
         }
 
-        private void gridJugador_SelectionChanged(object? sender, EventArgs e)
+        private void gridJugador_SelectionChanged(
+            object? sender, EventArgs e)
         {
-            // TODO T12
+            if (gridJugador.SelectedRows.Count > 0 &&
+                gridJugador.SelectedRows[0].DataBoundItem is JugadorEntity jugador)
+            {
+                idJugadorSeleccionado = jugador.IdJugador;
+                JugadorNombre.Text = jugador.Nombre;
+                JugadorApellido.Text = jugador.Apellido;
+                JugadorNumeroCamiseta.Value = jugador.NumeroCamiseta;
+                JugadorIdEquipo.SelectedValue = jugador.IdEquipo;
+                JugadorIdPais.SelectedValue = jugador.IdPais;
+            }
+            else
+            {
+                idJugadorSeleccionado = 0;
+            }
+        }
+
+        private void pestanas_SelectedIndexChanged_Jugador(
+            object? sender, EventArgs e)
+        {
+            if (pestanas.SelectedTab == tabJugador)
+                CargarPestanaJugador();
+        }
+
+        // Arma un JugadorEntity con lo que el usuario cargó en pantalla.
+        private JugadorEntity LeerJugadorDeControles()
+        {
+            JugadorEntity jugador = new JugadorEntity();
+
+            jugador.Nombre = JugadorNombre.Text;
+            jugador.Apellido = JugadorApellido.Text;
+            jugador.NumeroCamiseta = (int)JugadorNumeroCamiseta.Value;
+
+            // Si no hay nada elegido en el combo, queda en 0
+            // y la BLL muestra "Debe seleccionar un equipo/país".
+            jugador.IdEquipo = JugadorIdEquipo.SelectedValue is int idEquipo ? idEquipo : 0;
+            jugador.IdPais = JugadorIdPais.SelectedValue is int idPais ? idPais : 0;
+
+            return jugador;
+        }
+
+        private void LimpiarJugador()
+        {
+            gridJugador.ClearSelection();
+            idJugadorSeleccionado = 0;
+            JugadorNombre.Clear();
+            JugadorApellido.Clear();
+            JugadorNumeroCamiseta.Value = JugadorNumeroCamiseta.Minimum;
+            JugadorIdEquipo.SelectedIndex = -1;
+            JugadorIdPais.SelectedIndex = -1;
+            JugadorNombre.Focus();
         }
 
         #endregion

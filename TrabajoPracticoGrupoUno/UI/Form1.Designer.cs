@@ -1,4 +1,4 @@
-﻿namespace ParcialUnoGallino
+﻿namespace UI
 {
     partial class Form1
     {

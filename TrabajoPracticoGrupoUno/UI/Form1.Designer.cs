@@ -132,9 +132,9 @@
             tabPais.Controls.Add(btnPaisLimpiar);
             tabPais.Controls.Add(chkPaisInactivos);
             tabPais.Controls.Add(gridPais);
-            tabPais.Location = new Point(4, 32);
+            tabPais.Location = new Point(4, 26);
             tabPais.Name = "tabPais";
-            tabPais.Size = new Size(932, 514);
+            tabPais.Size = new Size(932, 520);
             tabPais.TabIndex = 0;
             tabPais.Text = "Países";
             tabPais.UseVisualStyleBackColor = true;
@@ -152,7 +152,7 @@
             PaisNombre.Location = new Point(20, 45);
             PaisNombre.MaxLength = 50;
             PaisNombre.Name = "PaisNombre";
-            PaisNombre.Size = new Size(270, 30);
+            PaisNombre.Size = new Size(270, 25);
             PaisNombre.TabIndex = 1;
             // 
             // btnPaisGuardar
@@ -229,9 +229,9 @@
             tabEquipo.Controls.Add(btnEquipoLimpiar);
             tabEquipo.Controls.Add(chkEquipoInactivos);
             tabEquipo.Controls.Add(gridEquipo);
-            tabEquipo.Location = new Point(4, 32);
+            tabEquipo.Location = new Point(4, 24);
             tabEquipo.Name = "tabEquipo";
-            tabEquipo.Size = new Size(932, 514);
+            tabEquipo.Size = new Size(932, 522);
             tabEquipo.TabIndex = 1;
             tabEquipo.Text = "Equipos";
             tabEquipo.UseVisualStyleBackColor = true;
@@ -249,7 +249,7 @@
             EquipoNombre.Location = new Point(20, 45);
             EquipoNombre.MaxLength = 50;
             EquipoNombre.Name = "EquipoNombre";
-            EquipoNombre.Size = new Size(270, 30);
+            EquipoNombre.Size = new Size(270, 25);
             EquipoNombre.TabIndex = 1;
             // 
             // lblEquipoFechaFundacion
@@ -266,7 +266,7 @@
             EquipoFechaFundacion.Format = DateTimePickerFormat.Custom;
             EquipoFechaFundacion.Location = new Point(320, 45);
             EquipoFechaFundacion.Name = "EquipoFechaFundacion";
-            EquipoFechaFundacion.Size = new Size(270, 30);
+            EquipoFechaFundacion.Size = new Size(270, 25);
             EquipoFechaFundacion.TabIndex = 3;
             // 
             // btnEquipoGuardar
@@ -349,9 +349,9 @@
             tabJugador.Controls.Add(btnJugadorLimpiar);
             tabJugador.Controls.Add(chkJugadorInactivos);
             tabJugador.Controls.Add(gridJugador);
-            tabJugador.Location = new Point(4, 32);
+            tabJugador.Location = new Point(4, 24);
             tabJugador.Name = "tabJugador";
-            tabJugador.Size = new Size(932, 514);
+            tabJugador.Size = new Size(932, 522);
             tabJugador.TabIndex = 2;
             tabJugador.Text = "Jugadores";
             tabJugador.UseVisualStyleBackColor = true;
@@ -369,7 +369,7 @@
             JugadorNombre.Location = new Point(20, 45);
             JugadorNombre.MaxLength = 50;
             JugadorNombre.Name = "JugadorNombre";
-            JugadorNombre.Size = new Size(270, 30);
+            JugadorNombre.Size = new Size(270, 25);
             JugadorNombre.TabIndex = 1;
             // 
             // lblJugadorApellido
@@ -385,7 +385,7 @@
             JugadorApellido.Location = new Point(320, 45);
             JugadorApellido.MaxLength = 50;
             JugadorApellido.Name = "JugadorApellido";
-            JugadorApellido.Size = new Size(270, 30);
+            JugadorApellido.Size = new Size(270, 25);
             JugadorApellido.TabIndex = 3;
             // 
             // lblJugadorNumeroCamiseta
@@ -401,7 +401,7 @@
             JugadorNumeroCamiseta.Location = new Point(620, 45);
             JugadorNumeroCamiseta.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
             JugadorNumeroCamiseta.Name = "JugadorNumeroCamiseta";
-            JugadorNumeroCamiseta.Size = new Size(270, 30);
+            JugadorNumeroCamiseta.Size = new Size(270, 25);
             JugadorNumeroCamiseta.TabIndex = 5;
             // 
             // lblJugadorIdEquipo
@@ -417,7 +417,7 @@
             JugadorIdEquipo.DropDownStyle = ComboBoxStyle.DropDownList;
             JugadorIdEquipo.Location = new Point(20, 115);
             JugadorIdEquipo.Name = "JugadorIdEquipo";
-            JugadorIdEquipo.Size = new Size(270, 31);
+            JugadorIdEquipo.Size = new Size(270, 25);
             JugadorIdEquipo.TabIndex = 7;
             // 
             // lblJugadorIdPais
@@ -433,7 +433,7 @@
             JugadorIdPais.DropDownStyle = ComboBoxStyle.DropDownList;
             JugadorIdPais.Location = new Point(320, 115);
             JugadorIdPais.Name = "JugadorIdPais";
-            JugadorIdPais.Size = new Size(270, 31);
+            JugadorIdPais.Size = new Size(270, 25);
             JugadorIdPais.TabIndex = 9;
             // 
             // btnJugadorGuardar
@@ -510,9 +510,9 @@
             tabTorneo.Controls.Add(btnTorneoLimpiar);
             tabTorneo.Controls.Add(chkTorneoInactivos);
             tabTorneo.Controls.Add(gridTorneo);
-            tabTorneo.Location = new Point(4, 32);
+            tabTorneo.Location = new Point(4, 24);
             tabTorneo.Name = "tabTorneo";
-            tabTorneo.Size = new Size(932, 514);
+            tabTorneo.Size = new Size(932, 522);
             tabTorneo.TabIndex = 3;
             tabTorneo.Text = "Torneos";
             tabTorneo.UseVisualStyleBackColor = true;
@@ -530,7 +530,7 @@
             TorneoNombre.Location = new Point(20, 45);
             TorneoNombre.MaxLength = 50;
             TorneoNombre.Name = "TorneoNombre";
-            TorneoNombre.Size = new Size(270, 30);
+            TorneoNombre.Size = new Size(270, 25);
             TorneoNombre.TabIndex = 1;
             // 
             // lblTorneoAño
@@ -547,7 +547,7 @@
             TorneoAño.Maximum = new decimal(new int[] { 2100, 0, 0, 0 });
             TorneoAño.Minimum = new decimal(new int[] { 1900, 0, 0, 0 });
             TorneoAño.Name = "TorneoAño";
-            TorneoAño.Size = new Size(270, 30);
+            TorneoAño.Size = new Size(270, 25);
             TorneoAño.TabIndex = 3;
             TorneoAño.Value = new decimal(new int[] { 2026, 0, 0, 0 });
             // 
@@ -634,9 +634,9 @@
             tabPartido.Controls.Add(btnPartidoLimpiar);
             tabPartido.Controls.Add(chkPartidoInactivos);
             tabPartido.Controls.Add(gridPartido);
-            tabPartido.Location = new Point(4, 32);
+            tabPartido.Location = new Point(4, 26);
             tabPartido.Name = "tabPartido";
-            tabPartido.Size = new Size(932, 514);
+            tabPartido.Size = new Size(932, 520);
             tabPartido.TabIndex = 4;
             tabPartido.Text = "Partidos";
             tabPartido.UseVisualStyleBackColor = true;
@@ -654,7 +654,7 @@
             PartidoIdTorneo.DropDownStyle = ComboBoxStyle.DropDownList;
             PartidoIdTorneo.Location = new Point(20, 45);
             PartidoIdTorneo.Name = "PartidoIdTorneo";
-            PartidoIdTorneo.Size = new Size(270, 31);
+            PartidoIdTorneo.Size = new Size(270, 25);
             PartidoIdTorneo.TabIndex = 1;
             // 
             // lblPartidoIdEquipoLocal
@@ -670,7 +670,7 @@
             PartidoIdEquipoLocal.DropDownStyle = ComboBoxStyle.DropDownList;
             PartidoIdEquipoLocal.Location = new Point(320, 45);
             PartidoIdEquipoLocal.Name = "PartidoIdEquipoLocal";
-            PartidoIdEquipoLocal.Size = new Size(270, 31);
+            PartidoIdEquipoLocal.Size = new Size(270, 25);
             PartidoIdEquipoLocal.TabIndex = 3;
             // 
             // lblPartidoIdEquipoVisitante
@@ -686,7 +686,7 @@
             PartidoIdEquipoVisitante.DropDownStyle = ComboBoxStyle.DropDownList;
             PartidoIdEquipoVisitante.Location = new Point(620, 45);
             PartidoIdEquipoVisitante.Name = "PartidoIdEquipoVisitante";
-            PartidoIdEquipoVisitante.Size = new Size(270, 31);
+            PartidoIdEquipoVisitante.Size = new Size(270, 25);
             PartidoIdEquipoVisitante.TabIndex = 5;
             // 
             // lblPartidoFecha
@@ -703,7 +703,7 @@
             PartidoFecha.Format = DateTimePickerFormat.Custom;
             PartidoFecha.Location = new Point(20, 115);
             PartidoFecha.Name = "PartidoFecha";
-            PartidoFecha.Size = new Size(270, 30);
+            PartidoFecha.Size = new Size(270, 25);
             PartidoFecha.TabIndex = 7;
             // 
             // lblPartidoGolesLocal
@@ -719,7 +719,7 @@
             PartidoGolesLocal.Location = new Point(320, 115);
             PartidoGolesLocal.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
             PartidoGolesLocal.Name = "PartidoGolesLocal";
-            PartidoGolesLocal.Size = new Size(270, 30);
+            PartidoGolesLocal.Size = new Size(270, 25);
             PartidoGolesLocal.TabIndex = 9;
             // 
             // lblPartidoGolesVisitante
@@ -735,7 +735,7 @@
             PartidoGolesVisitante.Location = new Point(620, 115);
             PartidoGolesVisitante.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
             PartidoGolesVisitante.Name = "PartidoGolesVisitante";
-            PartidoGolesVisitante.Size = new Size(270, 30);
+            PartidoGolesVisitante.Size = new Size(270, 25);
             PartidoGolesVisitante.TabIndex = 11;
             // 
             // chkResultado
@@ -805,7 +805,7 @@
             gridPartido.RowHeadersVisible = false;
             gridPartido.RowHeadersWidth = 51;
             gridPartido.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridPartido.Size = new Size(885, 252);
+            gridPartido.Size = new Size(885, 250);
             gridPartido.TabIndex = 18;
             // 
             // lblEstado
@@ -819,7 +819,7 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(9F, 23F);
+            AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(980, 675);
             Controls.Add(lblTitulo);

@@ -54,7 +54,10 @@ namespace UI
         //            btnPaisGuardar, btnPaisModificar, btnPaisEstado, btnPaisLimpiar
         // Negocio:   paisBusiness.add / update / cambiarEstado / getAll / getActivos / getById
         // ====================================================================
+
         #region Pestaña Países
+
+        private int idPaisSeleccionado = 0;
 
         private void ConectarEventosPais()
         {
@@ -68,37 +71,119 @@ namespace UI
 
         private void CargarPestanaPais()
         {
-            // TODO T09: cargar gridPais (getActivos o getAll según chkPaisInactivos)
+            try
+            {
+                idPaisSeleccionado = 0;
+
+                gridPais.SelectionMode =
+                    DataGridViewSelectionMode.FullRowSelect;
+
+                gridPais.MultiSelect = false;
+                gridPais.ReadOnly = true;
+
+                gridPais.DataSource = null;
+
+                if (chkPaisInactivos.Checked)
+                    gridPais.DataSource = paisBusiness.getAll();
+                else
+                    gridPais.DataSource = paisBusiness.getActivos();
+
+                LimpiarPais();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnPaisGuardar_Click(object? sender, EventArgs e)
         {
-            // TODO T09
+            try
+            {
+                PaisEntity pais = new PaisEntity();
+                pais.Nombre = PaisNombre.Text;
+
+                paisBusiness.add(pais);
+
+                CargarPestanaPais();
+
+                MostrarOk("País guardado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnPaisModificar_Click(object? sender, EventArgs e)
         {
-            // TODO T09
+            try
+            {
+                PaisEntity pais = new PaisEntity();
+
+                pais.IdPais = idPaisSeleccionado;
+                pais.Nombre = PaisNombre.Text;
+
+                paisBusiness.update(pais);
+
+                CargarPestanaPais();
+
+                MostrarOk("País modificado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnPaisEstado_Click(object? sender, EventArgs e)
         {
-            // TODO T09
+            try
+            {
+                paisBusiness.cambiarEstado(idPaisSeleccionado);
+
+                CargarPestanaPais();
+
+                MostrarOk("Estado actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnPaisLimpiar_Click(object? sender, EventArgs e)
         {
-            // TODO T09
+            LimpiarPais();
         }
 
-        private void chkPaisInactivos_CheckedChanged(object? sender, EventArgs e)
+        private void chkPaisInactivos_CheckedChanged(
+            object? sender, EventArgs e)
         {
-            // TODO T09
+            CargarPestanaPais();
         }
 
-        private void gridPais_SelectionChanged(object? sender, EventArgs e)
+        private void gridPais_SelectionChanged(
+            object? sender, EventArgs e)
         {
-            // TODO T09: pasar la fila seleccionada a los controles
+            if (gridPais.SelectedRows.Count > 0 &&
+                gridPais.SelectedRows[0].DataBoundItem is PaisEntity pais)
+            {
+                idPaisSeleccionado = pais.IdPais;
+                PaisNombre.Text = pais.Nombre;
+            }
+            else
+            {
+                idPaisSeleccionado = 0;
+            }
+        }
+
+        private void LimpiarPais()
+        {
+            gridPais.ClearSelection();
+            idPaisSeleccionado = 0;
+            PaisNombre.Clear();
+            PaisNombre.Focus();
         }
 
         #endregion

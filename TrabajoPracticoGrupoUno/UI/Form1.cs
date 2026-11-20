@@ -154,47 +154,77 @@ namespace UI
 
         private void btnPaisLimpiar_Click(object? sender, EventArgs e)
         {
-            LimpiarPais();
+            try
+            {
+                LimpiarPais();
+            }
+            catch(Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void chkPaisInactivos_CheckedChanged(
             object? sender, EventArgs e)
         {
-            CargarPestanaPais();
+            try
+            {
+                CargarPestanaPais();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void gridPais_SelectionChanged(
             object? sender, EventArgs e)
         {
-            if (gridPais.SelectedRows.Count > 0 &&
-                gridPais.SelectedRows[0].DataBoundItem is PaisEntity pais)
+            try
             {
-                idPaisSeleccionado = pais.IdPais;
-                PaisNombre.Text = pais.Nombre;
+                if (gridPais.SelectedRows.Count > 0 &&
+                                gridPais.SelectedRows[0].DataBoundItem is PaisEntity pais)
+                {
+                    idPaisSeleccionado = pais.IdPais;
+                    PaisNombre.Text = pais.Nombre;
+                }
+                else
+                {
+                    idPaisSeleccionado = 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                idPaisSeleccionado = 0;
+                MostrarError(ex);
             }
         }
 
         private void LimpiarPais()
         {
-            gridPais.ClearSelection();
-            idPaisSeleccionado = 0;
-            PaisNombre.Clear();
-            PaisNombre.Focus();
+            try
+            {
+                gridPais.ClearSelection();
+                idPaisSeleccionado = 0;
+                PaisNombre.Clear();
+                PaisNombre.Focus();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         #endregion
 
         // ====================================================================
-        // PESTAÑA EQUIPOS (T11) - Responsable: ________
+        // PESTAÑA EQUIPOS (T11) - Responsable: LA PROMESA
         // Controles: EquipoNombre, EquipoFechaFundacion, gridEquipo, chkEquipoInactivos,
         //            btnEquipoGuardar, btnEquipoModificar, btnEquipoEstado, btnEquipoLimpiar
         // Negocio:   equipoBusiness.add / update / cambiarEstado / getAll / getActivos / getById
         // ====================================================================
         #region Pestaña Equipos
+
+        private int idEquipoSeleccionado = 0;
 
         private void ConectarEventosEquipo()
         {
@@ -208,37 +238,155 @@ namespace UI
 
         private void CargarPestanaEquipo()
         {
-            // TODO T11
+            try
+            {
+                idEquipoSeleccionado = 0;
+
+                gridEquipo.SelectionMode =
+                    DataGridViewSelectionMode.FullRowSelect;
+
+                gridEquipo.MultiSelect = false;
+                gridEquipo.ReadOnly = true;
+
+                gridEquipo.DataSource = null;
+
+                if (chkEquipoInactivos.Checked)
+                    gridEquipo.DataSource = equipoBusiness.getAll();
+                else
+                    gridEquipo.DataSource = equipoBusiness.getActivos();
+
+                // Para que la fecha no se vea con hora (pueden agregarlo los demás)
+                if (gridEquipo.Columns["FechaFundacion"] != null)
+                {
+                    gridEquipo.Columns["FechaFundacion"].DefaultCellStyle.Format = "dd/MM/yyyy";
+                }
+              
+                LimpiarEquipo();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnEquipoGuardar_Click(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                EquipoEntity equipo = new EquipoEntity();
+                equipo.Nombre = EquipoNombre.Text;
+                equipo.FechaFundacion = EquipoFechaFundacion.Value;
+
+                equipoBusiness.add(equipo);
+
+                CargarPestanaEquipo();
+
+                MostrarOk("Equipo fundado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnEquipoModificar_Click(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                EquipoEntity equipo = new EquipoEntity();
+
+                equipo.IdEquipo = idEquipoSeleccionado;
+                equipo.Nombre = EquipoNombre.Text;
+                equipo.FechaFundacion = EquipoFechaFundacion.Value;
+
+                equipoBusiness.update(equipo);
+
+                CargarPestanaEquipo();
+
+                MostrarOk("Equipo modificado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnEquipoEstado_Click(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                equipoBusiness.cambiarEstado(idEquipoSeleccionado);
+
+                CargarPestanaEquipo();
+
+                MostrarOk("Estado actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnEquipoLimpiar_Click(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                LimpiarEquipo();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void chkEquipoInactivos_CheckedChanged(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                CargarPestanaEquipo();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void gridEquipo_SelectionChanged(object? sender, EventArgs e)
         {
-            // TODO T11
+            try
+            {
+                if (gridEquipo.SelectedRows.Count > 0 &&
+                gridEquipo.SelectedRows[0].DataBoundItem is EquipoEntity equipo)
+                {
+                    idEquipoSeleccionado = equipo.IdEquipo;
+                    EquipoNombre.Text = equipo.Nombre;
+                    EquipoFechaFundacion.Value = equipo.FechaFundacion;
+                }
+                else
+                {
+                    idEquipoSeleccionado = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
+        }
+
+        private void LimpiarEquipo()
+        {
+            try
+            {
+                gridEquipo.ClearSelection();
+                idEquipoSeleccionado = 0;
+                EquipoNombre.Clear();
+                EquipoFechaFundacion.Value = DateTime.Today;
+                EquipoNombre.Focus();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         #endregion

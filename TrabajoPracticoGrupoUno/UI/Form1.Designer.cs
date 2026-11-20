@@ -640,7 +640,6 @@
             tabPartido.TabIndex = 4;
             tabPartido.Text = "Partidos";
             tabPartido.UseVisualStyleBackColor = true;
-            tabPartido.Click += tabPartido_Click;
             // 
             // lblPartidoIdTorneo
             // 

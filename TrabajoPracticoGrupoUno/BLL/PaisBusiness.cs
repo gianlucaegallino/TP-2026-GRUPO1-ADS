@@ -14,7 +14,7 @@ namespace BLL
             {
                 using (var trx = new TransactionScope())
                 {
-                    tempEntity.Nombre = tempEntity.Nombre.Trim();
+                    tempEntity.Nombre = tempEntity.Nombre?.Trim() ?? "";
 
                     // Validaciones
                     ValidarNombre(tempEntity.Nombre);
@@ -38,7 +38,7 @@ namespace BLL
             {
                 using (var trx = new TransactionScope())
                 {
-                    tempEntity.Nombre = tempEntity.Nombre.Trim();
+                    tempEntity.Nombre = tempEntity.Nombre?.Trim() ?? "";
 
                     ValidarIdSeleccionado(tempEntity.IdPais);
                     ValidarExistenciaPorID(tempEntity.IdPais);

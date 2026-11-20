@@ -54,6 +54,7 @@ namespace UI
         //            btnPaisGuardar, btnPaisModificar, btnPaisEstado, btnPaisLimpiar
         // Negocio:   paisBusiness.add / update / cambiarEstado / getAll / getActivos / getById
         // ====================================================================
+
         #region Pestaña Países
 
         private int idPaisSeleccionado = 0;
@@ -72,6 +73,14 @@ namespace UI
         {
             try
             {
+                idPaisSeleccionado = 0;
+
+                gridPais.SelectionMode =
+                    DataGridViewSelectionMode.FullRowSelect;
+
+                gridPais.MultiSelect = false;
+                gridPais.ReadOnly = true;
+
                 gridPais.DataSource = null;
 
                 if (chkPaisInactivos.Checked)
@@ -79,14 +88,7 @@ namespace UI
                 else
                     gridPais.DataSource = paisBusiness.getActivos();
 
-
-                gridPais.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                gridPais.MultiSelect = false;
-                gridPais.ReadOnly = true;
-                idPaisSeleccionado = 0;
-
-
-                gridPais.ClearSelection();
+                LimpiarPais();
             }
             catch (Exception ex)
             {
@@ -99,12 +101,11 @@ namespace UI
             try
             {
                 PaisEntity pais = new PaisEntity();
-                pais.Nombre = PaisNombre.Text.Trim();
+                pais.Nombre = PaisNombre.Text;
 
                 paisBusiness.add(pais);
 
                 CargarPestanaPais();
-                LimpiarPais();
 
                 MostrarOk("País guardado correctamente");
             }
@@ -114,25 +115,18 @@ namespace UI
             }
         }
 
-
         private void btnPaisModificar_Click(object? sender, EventArgs e)
         {
             try
             {
-                if (idPaisSeleccionado == 0)
-                    throw new Exception("Seleccioná un país.");
+                PaisEntity pais = new PaisEntity();
 
-                PaisEntity pais = paisBusiness.getById(idPaisSeleccionado);
-
-                if (pais == null)
-                    throw new Exception("El país no existe.");
-
-                pais.Nombre = PaisNombre.Text.Trim();
+                pais.IdPais = idPaisSeleccionado;
+                pais.Nombre = PaisNombre.Text;
 
                 paisBusiness.update(pais);
 
                 CargarPestanaPais();
-                LimpiarPais();
 
                 MostrarOk("País modificado correctamente");
             }
@@ -142,20 +136,15 @@ namespace UI
             }
         }
 
-
         private void btnPaisEstado_Click(object? sender, EventArgs e)
         {
             try
             {
-                if (idPaisSeleccionado == 0)
-                    throw new Exception("Seleccioná un país.");
-
                 paisBusiness.cambiarEstado(idPaisSeleccionado);
 
                 CargarPestanaPais();
-                LimpiarPais();
 
-                MostrarOk("Estado cambiado correctamente");
+                MostrarOk("Estado actualizado correctamente");
             }
             catch (Exception ex)
             {
@@ -168,12 +157,14 @@ namespace UI
             LimpiarPais();
         }
 
-        private void chkPaisInactivos_CheckedChanged(object? sender, EventArgs e)
+        private void chkPaisInactivos_CheckedChanged(
+            object? sender, EventArgs e)
         {
             CargarPestanaPais();
         }
 
-        private void gridPais_SelectionChanged(object? sender, EventArgs e)
+        private void gridPais_SelectionChanged(
+            object? sender, EventArgs e)
         {
             if (gridPais.SelectedRows.Count > 0 &&
                 gridPais.SelectedRows[0].DataBoundItem is PaisEntity pais)
@@ -181,13 +172,17 @@ namespace UI
                 idPaisSeleccionado = pais.IdPais;
                 PaisNombre.Text = pais.Nombre;
             }
+            else
+            {
+                idPaisSeleccionado = 0;
+            }
         }
 
         private void LimpiarPais()
         {
+            gridPais.ClearSelection();
             idPaisSeleccionado = 0;
             PaisNombre.Clear();
-            gridPais.ClearSelection();
             PaisNombre.Focus();
         }
 
@@ -425,10 +420,5 @@ namespace UI
         }
 
         #endregion
-
-        private void tabPartido_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

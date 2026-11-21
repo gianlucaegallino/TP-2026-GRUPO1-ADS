@@ -21,5 +21,8 @@ namespace Entity
         public DateTime Fecha { get; set; }
 
         public bool Activo { get; set; } = true;
+
+        public DateTime? FechaFinPartido { get; set; }
+
     }
 }

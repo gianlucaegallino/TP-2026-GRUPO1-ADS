@@ -20,7 +20,9 @@ namespace Mapper
                 GolesLocal = origen.Goleslocal ?? 0,       
                 GolesVisitante = origen.Golesvisitante ?? 0,
                 Fecha = origen.Fecha,
-                Activo = origen.Activo
+                Activo = origen.Activo,
+                FechaFinPartido = origen.Fechafinpartido
+
             };
         }
 
@@ -36,7 +38,9 @@ namespace Mapper
                 Goleslocal = origen.GolesLocal,       
                 Golesvisitante = origen.GolesVisitante, 
                 Fecha = origen.Fecha,
-                Activo = origen.Activo
+                Activo = origen.Activo,
+                Fechafinpartido = origen.FechaFinPartido
+
             };
         }
     }

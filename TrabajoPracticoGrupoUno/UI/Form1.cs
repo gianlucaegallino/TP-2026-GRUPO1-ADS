@@ -442,6 +442,8 @@ namespace UI
         // ====================================================================
         #region Pestaña Torneos
 
+        private int idTorneoSeleccionado = 0;
+
         private void ConectarEventosTorneo()
         {
             btnTorneoGuardar.Click += btnTorneoGuardar_Click;
@@ -454,37 +456,125 @@ namespace UI
 
         private void CargarPestanaTorneo()
         {
-            // TODO T10
+            try
+            {
+                idTorneoSeleccionado = 0;
+
+                gridTorneo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+                gridTorneo.MultiSelect = false;
+                gridTorneo.ReadOnly = true;
+
+                gridTorneo.DataSource = null;
+
+                if (chkTorneoInactivos.Checked)
+                {
+                    gridTorneo.DataSource = torneoBusiness.getAll();
+                }
+                else
+                {
+                    gridTorneo.DataSource = torneoBusiness.getActivos();
+                }
+
+                LimpiarTorneo();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnTorneoGuardar_Click(object? sender, EventArgs e)
         {
-            // TODO T10
+            try
+            {
+                TorneoEntity torneo = new TorneoEntity();
+
+                torneo.Nombre = TorneoNombre.Text;
+                torneo.Año = Convert.ToInt32(TorneoAño.Value);
+
+                torneoBusiness.add(torneo);
+
+                CargarPestanaTorneo();
+
+                MostrarOk("Torneo guardado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnTorneoModificar_Click(object? sender, EventArgs e)
         {
-            // TODO T10
+            try
+            {
+                TorneoEntity torneo = new TorneoEntity();
+
+                torneo.IdTorneo = idTorneoSeleccionado;
+                torneo.Nombre = TorneoNombre.Text;
+                torneo.Año = Convert.ToInt32(TorneoAño.Value);
+
+                torneoBusiness.update(torneo);
+
+                CargarPestanaTorneo();
+
+                MostrarOk("Torneo modificado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnTorneoEstado_Click(object? sender, EventArgs e)
         {
-            // TODO T10
+            try
+            {
+                torneoBusiness.cambiarEstado(idTorneoSeleccionado);
+
+                CargarPestanaTorneo();
+
+                MostrarOk("Estado del torneo actualizado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void btnTorneoLimpiar_Click(object? sender, EventArgs e)
         {
-            // TODO T10
+            LimpiarTorneo();
         }
 
         private void chkTorneoInactivos_CheckedChanged(object? sender, EventArgs e)
         {
-            // TODO T10
+            CargarPestanaTorneo();
         }
 
         private void gridTorneo_SelectionChanged(object? sender, EventArgs e)
         {
-            // TODO T10
+            if (gridTorneo.SelectedRows.Count > 0 && gridTorneo.SelectedRows[0].DataBoundItem is TorneoEntity torneo)
+            {
+                idTorneoSeleccionado = torneo.IdTorneo;
+                TorneoNombre.Text = torneo.Nombre;
+                TorneoAño.Value = torneo.Año;
+            }
+            else
+            {
+                idTorneoSeleccionado = 0;
+            }
+        }
+
+        private void LimpiarTorneo()
+        {
+            gridTorneo.ClearSelection();
+
+            idTorneoSeleccionado = 0;
+            TorneoNombre.Clear();
+            TorneoAño.Value = DateTime.Now.Year;
+            TorneoNombre.Focus();
         }
 
         #endregion

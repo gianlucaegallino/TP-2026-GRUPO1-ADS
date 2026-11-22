@@ -514,25 +514,129 @@ namespace UI
             gridPartido.SelectionChanged += gridPartido_SelectionChanged;
         }
 
+
         private void CargarPestanaPartido()
         {
-            // TODO T13: cargar combos de Torneo, Local y Visitante + gridPartido
+            try
+            {
+                idPartidoSeleccionado = 0;
+
+                // Cargar torneos activos
+                PartidoIdTorneo.DataSource = null;
+                PartidoIdTorneo.DisplayMember = "Nombre";
+                PartidoIdTorneo.ValueMember = "IdTorneo";
+                PartidoIdTorneo.DataSource = torneoBusiness.getActivos();
+
+                // Cargar equipos locales activos
+                PartidoIdEquipoLocal.DataSource = null;
+                PartidoIdEquipoLocal.DisplayMember = "Nombre";
+                PartidoIdEquipoLocal.ValueMember = "IdEquipo";
+                PartidoIdEquipoLocal.DataSource = equipoBusiness.getActivos();
+
+                // Cargar equipos visitantes activos
+                PartidoIdEquipoVisitante.DataSource = null;
+                PartidoIdEquipoVisitante.DisplayMember = "Nombre";
+                PartidoIdEquipoVisitante.ValueMember = "IdEquipo";
+                PartidoIdEquipoVisitante.DataSource = equipoBusiness.getActivos();
+
+                // Cargar partidos
+                gridPartido.DataSource = null;
+
+                if (chkPartidoInactivos.Checked)
+                    gridPartido.DataSource = partidoBusiness.getAll();
+                else
+                    gridPartido.DataSource = partidoBusiness.getActivos();
+
+                LimpiarPartido();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
+
+        private PartidoEntity LeerPartidoDeControles()
+        {
+            PartidoEntity partido = new PartidoEntity();
+
+            partido.IdTorneo = PartidoIdTorneo.SelectedValue is int idTorneo
+                ? idTorneo : 0;
+
+            partido.IdEquipoLocal = PartidoIdEquipoLocal.SelectedValue is int idLocal
+                ? idLocal : 0;
+
+            partido.IdEquipoVisitante = PartidoIdEquipoVisitante.SelectedValue is int idVisitante
+                ? idVisitante : 0;
+
+            partido.Fecha = PartidoFecha.Value;
+
+            partido.GolesLocal = (int)PartidoGolesLocal.Value;
+            partido.GolesVisitante = (int)PartidoGolesVisitante.Value;
+
+            return partido;
+        }
+
+
 
         private void btnPartidoGuardar_Click(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                PartidoEntity partido = LeerPartidoDeControles();
+
+                partidoBusiness.add(partido, chkResultado.Checked);
+
+                CargarPestanaPartido();
+
+                MostrarOk("Partido guardado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
+
 
         private void btnPartidoModificar_Click(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                PartidoEntity partido = LeerPartidoDeControles();
+
+                partido.IdPartido = idPartidoSeleccionado;
+
+                partidoBusiness.update(partido, chkResultado.Checked);
+
+                CargarPestanaPartido();
+
+                MostrarOk("Partido modificado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
+
 
         private void btnPartidoEstado_Click(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                partidoBusiness.cambiarEstado(idPartidoSeleccionado);
+
+                CargarPestanaPartido();
+
+                MostrarOk("Estado del partido actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
 
 
         private void btnPartidoLimpiar_Click(object? sender, EventArgs e)
@@ -573,10 +677,19 @@ namespace UI
         }
 
 
+
         private void chkPartidoInactivos_CheckedChanged(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                CargarPestanaPartido();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
 
 
         private void chkResultado_CheckedChanged(object? sender, EventArgs e)
@@ -608,9 +721,36 @@ namespace UI
         }
 
 
+
         private void gridPartido_SelectionChanged(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                if (gridPartido.SelectedRows.Count > 0 &&
+                    gridPartido.SelectedRows[0].DataBoundItem is PartidoEntity partido)
+                {
+                    idPartidoSeleccionado = partido.IdPartido;
+
+                    PartidoIdTorneo.SelectedValue = partido.IdTorneo;
+                    PartidoIdEquipoLocal.SelectedValue = partido.IdEquipoLocal;
+                    PartidoIdEquipoVisitante.SelectedValue = partido.IdEquipoVisitante;
+
+                    PartidoFecha.Value = partido.Fecha;
+
+                    chkResultado.Checked = partido.FechaFinPartido.HasValue;
+
+                    PartidoGolesLocal.Value = partido.GolesLocal;
+                    PartidoGolesVisitante.Value = partido.GolesVisitante;
+                }
+                else
+                {
+                    idPartidoSeleccionado = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         #endregion

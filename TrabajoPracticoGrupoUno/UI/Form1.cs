@@ -35,6 +35,8 @@ namespace UI
             CargarPestanaJugador();
             CargarPestanaTorneo();
             CargarPestanaPartido();
+            ConfigurarGrillaPartido();
+            LimpiarPartido();
         }
 
         // Muestra cualquier error de validación o de base de datos.
@@ -738,7 +740,7 @@ namespace UI
         //            combos: torneoBusiness.getActivos(), equipoBusiness.getActivos()
         // ====================================================================
         #region Pestaña Partidos
-
+        private int idPartidoSeleccionado = 0;
         private void ConectarEventosPartido()
         {
             btnPartidoGuardar.Click += btnPartidoGuardar_Click;
@@ -770,20 +772,79 @@ namespace UI
             // TODO T13
         }
 
+
         private void btnPartidoLimpiar_Click(object? sender, EventArgs e)
         {
-            // TODO T13
+            try
+            {
+                LimpiarPartido();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
+
+        private void LimpiarPartido()
+        {
+            try
+            {
+                idPartidoSeleccionado = 0;
+
+                PartidoIdTorneo.SelectedIndex = -1;
+                PartidoIdEquipoLocal.SelectedIndex = -1;
+                PartidoIdEquipoVisitante.SelectedIndex = -1;
+
+                PartidoFecha.Value = DateTime.Now;
+
+                chkResultado.Checked = false;
+
+                PartidoGolesLocal.Value = 0;
+                PartidoGolesVisitante.Value = 0;
+
+                gridPartido.ClearSelection();
+            }
+            catch (Exception ex) 
+            {
+                MostrarError(ex);
+            }
+        }
+
 
         private void chkPartidoInactivos_CheckedChanged(object? sender, EventArgs e)
         {
             // TODO T13
         }
 
+
         private void chkResultado_CheckedChanged(object? sender, EventArgs e)
         {
-            // TODO T13: habilitar/deshabilitar PartidoGolesLocal y PartidoGolesVisitante
+            PartidoGolesLocal.Enabled = chkResultado.Checked;
+            PartidoGolesVisitante.Enabled = chkResultado.Checked;
+
+            if (!chkResultado.Checked)
+            {
+                PartidoGolesLocal.Value = 0;
+                PartidoGolesVisitante.Value = 0;
+            }
         }
+
+
+        private void ConfigurarGrillaPartido()
+        {
+            gridPartido.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+
+            gridPartido.MultiSelect = false;
+            gridPartido.ReadOnly = true;
+            gridPartido.AllowUserToAddRows = false;
+
+            gridPartido.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+
+            gridPartido.ClearSelection();
+        }
+
 
         private void gridPartido_SelectionChanged(object? sender, EventArgs e)
         {

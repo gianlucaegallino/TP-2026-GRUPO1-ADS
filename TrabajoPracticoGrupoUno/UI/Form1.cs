@@ -406,11 +406,11 @@ namespace UI
 
         private int idJugadorSeleccionado = 0;
 
-        // T15: nombres para mostrar en la grilla en lugar de los IDs.
+        // T15: listas para mostrar nombres en la grilla en lugar de los IDs.
         // Incluyen inactivos, para que un jugador de un equipo desactivado
         // igual muestre el nombre del equipo.
-        private Dictionary<int, string> nombresEquipoJugador = new();
-        private Dictionary<int, string> nombresPaisJugador = new();
+        private List<EquipoEntity> equiposJugador = new();
+        private List<PaisEntity> paisesJugador = new();
 
         private void ConectarEventosJugador()
         {
@@ -443,11 +443,9 @@ namespace UI
 
                 CargarCombosJugador();
 
-                // T15: nombres de todos los equipos y países (activos e inactivos).
-                nombresEquipoJugador = equipoBusiness.getAll()
-                    .ToDictionary(eq => eq.IdEquipo, eq => eq.Nombre);
-                nombresPaisJugador = paisBusiness.getAll()
-                    .ToDictionary(p => p.IdPais, p => p.Nombre);
+                // T15: todos los equipos y países (activos e inactivos).
+                equiposJugador = equipoBusiness.getAll();
+                paisesJugador = paisBusiness.getAll();
 
                 gridJugador.DataSource = null;
 
@@ -613,17 +611,25 @@ namespace UI
 
             string columna = gridJugador.Columns[e.ColumnIndex].DataPropertyName;
 
-            if (columna == "IdEquipo" &&
-                nombresEquipoJugador.TryGetValue(id, out string? equipo))
+            if (columna == "IdEquipo")
             {
-                e.Value = equipo;
-                e.FormattingApplied = true;
+                // Busca en la lista el equipo con ese ID
+                EquipoEntity? equipo = equiposJugador.FirstOrDefault(eq => eq.IdEquipo == id);
+                if (equipo != null)
+                {
+                    e.Value = equipo.Nombre;
+                    e.FormattingApplied = true;
+                }
             }
-            else if (columna == "IdPais" &&
-                nombresPaisJugador.TryGetValue(id, out string? pais))
+            else if (columna == "IdPais")
             {
-                e.Value = pais;
-                e.FormattingApplied = true;
+                // Busca en la lista el país con ese ID
+                PaisEntity? pais = paisesJugador.FirstOrDefault(p => p.IdPais == id);
+                if (pais != null)
+                {
+                    e.Value = pais.Nombre;
+                    e.FormattingApplied = true;
+                }
             }
         }
 
@@ -787,10 +793,10 @@ namespace UI
         #region Pestaña Partidos
         private int idPartidoSeleccionado = 0;
 
-        // T15: nombres para mostrar en la grilla en lugar de los IDs.
+        // T15: listas para mostrar nombres en la grilla en lugar de los IDs.
         // Incluyen inactivos, para que un partido viejo siga mostrando nombres.
-        private Dictionary<int, string> nombresTorneoPartido = new();
-        private Dictionary<int, string> nombresEquipoPartido = new();
+        private List<TorneoEntity> torneosPartido = new();
+        private List<EquipoEntity> equiposPartido = new();
 
         private void ConectarEventosPartido()
         {
@@ -839,11 +845,9 @@ namespace UI
                 PartidoIdEquipoVisitante.ValueMember = "IdEquipo";
                 PartidoIdEquipoVisitante.DataSource = equipoBusiness.getActivos();
 
-                // T15 (V01): nombres de todos los torneos y equipos (activos e inactivos).
-                nombresTorneoPartido = torneoBusiness.getAll()
-                    .ToDictionary(t => t.IdTorneo, t => $"{t.Nombre} ({t.Año})");
-                nombresEquipoPartido = equipoBusiness.getAll()
-                    .ToDictionary(eq => eq.IdEquipo, eq => eq.Nombre);
+                // T15 (V01): todos los torneos y equipos (activos e inactivos).
+                torneosPartido = torneoBusiness.getAll();
+                equiposPartido = equipoBusiness.getAll();
 
                 // Cargar partidos
                 gridPartido.DataSource = null;
@@ -1085,17 +1089,25 @@ namespace UI
 
             string columna = gridPartido.Columns[e.ColumnIndex].DataPropertyName;
 
-            if (columna == "IdTorneo" &&
-                nombresTorneoPartido.TryGetValue(id, out string? torneo))
+            if (columna == "IdTorneo")
             {
-                e.Value = torneo;
-                e.FormattingApplied = true;
+                // Busca en la lista el torneo con ese ID
+                TorneoEntity? torneo = torneosPartido.FirstOrDefault(t => t.IdTorneo == id);
+                if (torneo != null)
+                {
+                    e.Value = $"{torneo.Nombre} ({torneo.Año})";
+                    e.FormattingApplied = true;
+                }
             }
-            else if ((columna == "IdEquipoLocal" || columna == "IdEquipoVisitante") &&
-                nombresEquipoPartido.TryGetValue(id, out string? equipo))
+            else if (columna == "IdEquipoLocal" || columna == "IdEquipoVisitante")
             {
-                e.Value = equipo;
-                e.FormattingApplied = true;
+                // Busca en la lista el equipo con ese ID (sirve para local y visitante)
+                EquipoEntity? equipo = equiposPartido.FirstOrDefault(eq => eq.IdEquipo == id);
+                if (equipo != null)
+                {
+                    e.Value = equipo.Nombre;
+                    e.FormattingApplied = true;
+                }
             }
         }
 

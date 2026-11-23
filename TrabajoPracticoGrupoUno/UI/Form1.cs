@@ -406,6 +406,12 @@ namespace UI
 
         private int idJugadorSeleccionado = 0;
 
+        // T15: nombres para mostrar en la grilla en lugar de los IDs.
+        // Incluyen inactivos, para que un jugador de un equipo desactivado
+        // igual muestre el nombre del equipo.
+        private Dictionary<int, string> nombresEquipoJugador = new();
+        private Dictionary<int, string> nombresPaisJugador = new();
+
         private void ConectarEventosJugador()
         {
             btnJugadorGuardar.Click += btnJugadorGuardar_Click;
@@ -418,6 +424,9 @@ namespace UI
             // Al entrar a la pestaña Jugadores se recargan los combos,
             // por si en Equipos o Países se agregó o desactivó algo.
             pestanas.SelectedIndexChanged += pestanas_SelectedIndexChanged_Jugador;
+
+            // T15: mostrar nombres en lugar de IDs en la grilla.
+            gridJugador.CellFormatting += gridJugador_CellFormatting;
         }
 
         private void CargarPestanaJugador()
@@ -434,12 +443,24 @@ namespace UI
 
                 CargarCombosJugador();
 
+                // T15: nombres de todos los equipos y países (activos e inactivos).
+                nombresEquipoJugador = equipoBusiness.getAll()
+                    .ToDictionary(eq => eq.IdEquipo, eq => eq.Nombre);
+                nombresPaisJugador = paisBusiness.getAll()
+                    .ToDictionary(p => p.IdPais, p => p.Nombre);
+
                 gridJugador.DataSource = null;
 
                 if (chkJugadorInactivos.Checked)
                     gridJugador.DataSource = jugadorBusiness.getAll();
                 else
                     gridJugador.DataSource = jugadorBusiness.getActivos();
+
+                // T15: títulos de columna más claros.
+                if (gridJugador.Columns.Contains("IdEquipo"))
+                    gridJugador.Columns["IdEquipo"]!.HeaderText = "Equipo";
+                if (gridJugador.Columns.Contains("IdPais"))
+                    gridJugador.Columns["IdPais"]!.HeaderText = "País";
 
                 LimpiarJugador();
             }
@@ -580,6 +601,30 @@ namespace UI
             JugadorIdEquipo.SelectedIndex = -1;
             JugadorIdPais.SelectedIndex = -1;
             JugadorNombre.Focus();
+        }
+
+        // T15: cuando la grilla va a dibujar una celda de IdEquipo o IdPais,
+        // muestra el nombre. El dato de fondo sigue siendo el ID, así que
+        // la selección de filas y Modificar funcionan igual que antes.
+        private void gridJugador_CellFormatting(
+            object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.Value is not int id) return;
+
+            string columna = gridJugador.Columns[e.ColumnIndex].DataPropertyName;
+
+            if (columna == "IdEquipo" &&
+                nombresEquipoJugador.TryGetValue(id, out string? equipo))
+            {
+                e.Value = equipo;
+                e.FormattingApplied = true;
+            }
+            else if (columna == "IdPais" &&
+                nombresPaisJugador.TryGetValue(id, out string? pais))
+            {
+                e.Value = pais;
+                e.FormattingApplied = true;
+            }
         }
 
         #endregion
@@ -741,6 +786,12 @@ namespace UI
         // ====================================================================
         #region Pestaña Partidos
         private int idPartidoSeleccionado = 0;
+
+        // T15: nombres para mostrar en la grilla en lugar de los IDs.
+        // Incluyen inactivos, para que un partido viejo siga mostrando nombres.
+        private Dictionary<int, string> nombresTorneoPartido = new();
+        private Dictionary<int, string> nombresEquipoPartido = new();
+
         private void ConectarEventosPartido()
         {
             btnPartidoGuardar.Click += btnPartidoGuardar_Click;
@@ -750,6 +801,13 @@ namespace UI
             chkPartidoInactivos.CheckedChanged += chkPartidoInactivos_CheckedChanged;
             chkResultado.CheckedChanged += chkResultado_CheckedChanged;
             gridPartido.SelectionChanged += gridPartido_SelectionChanged;
+
+            // T15 (X01): al entrar a la pestaña se recargan combos y grilla,
+            // por si en Equipos o Torneos se agregó o desactivó algo.
+            pestanas.SelectedIndexChanged += pestanas_SelectedIndexChanged_Partido;
+
+            // T15 (V01): mostrar nombres en lugar de IDs en la grilla.
+            gridPartido.CellFormatting += gridPartido_CellFormatting;
         }
 
 
@@ -759,11 +817,15 @@ namespace UI
             {
                 idPartidoSeleccionado = 0;
 
-                // Cargar torneos activos
+                // Cargar torneos activos.
+                // T15 (X03): se muestran como "Nombre (Año)" para distinguir
+                // torneos que se llaman igual en distintos años.
                 PartidoIdTorneo.DataSource = null;
-                PartidoIdTorneo.DisplayMember = "Nombre";
+                PartidoIdTorneo.DisplayMember = "Texto";
                 PartidoIdTorneo.ValueMember = "IdTorneo";
-                PartidoIdTorneo.DataSource = torneoBusiness.getActivos();
+                PartidoIdTorneo.DataSource = torneoBusiness.getActivos()
+                    .Select(t => new { t.IdTorneo, Texto = $"{t.Nombre} ({t.Año})" })
+                    .ToList();
 
                 // Cargar equipos locales activos
                 PartidoIdEquipoLocal.DataSource = null;
@@ -777,6 +839,12 @@ namespace UI
                 PartidoIdEquipoVisitante.ValueMember = "IdEquipo";
                 PartidoIdEquipoVisitante.DataSource = equipoBusiness.getActivos();
 
+                // T15 (V01): nombres de todos los torneos y equipos (activos e inactivos).
+                nombresTorneoPartido = torneoBusiness.getAll()
+                    .ToDictionary(t => t.IdTorneo, t => $"{t.Nombre} ({t.Año})");
+                nombresEquipoPartido = equipoBusiness.getAll()
+                    .ToDictionary(eq => eq.IdEquipo, eq => eq.Nombre);
+
                 // Cargar partidos
                 gridPartido.DataSource = null;
 
@@ -784,6 +852,14 @@ namespace UI
                     gridPartido.DataSource = partidoBusiness.getAll();
                 else
                     gridPartido.DataSource = partidoBusiness.getActivos();
+
+                // T15 (V01): títulos de columna más claros.
+                if (gridPartido.Columns.Contains("IdTorneo"))
+                    gridPartido.Columns["IdTorneo"]!.HeaderText = "Torneo";
+                if (gridPartido.Columns.Contains("IdEquipoLocal"))
+                    gridPartido.Columns["IdEquipoLocal"]!.HeaderText = "Local";
+                if (gridPartido.Columns.Contains("IdEquipoVisitante"))
+                    gridPartido.Columns["IdEquipoVisitante"]!.HeaderText = "Visitante";
 
                 LimpiarPartido();
             }
@@ -908,7 +984,7 @@ namespace UI
 
                 gridPartido.ClearSelection();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MostrarError(ex);
             }
@@ -988,6 +1064,38 @@ namespace UI
             catch (Exception ex)
             {
                 MostrarError(ex);
+            }
+        }
+
+        // T15 (X01): recarga la pestaña al entrar a Partidos.
+        private void pestanas_SelectedIndexChanged_Partido(
+            object? sender, EventArgs e)
+        {
+            if (pestanas.SelectedTab == tabPartido)
+                CargarPestanaPartido();
+        }
+
+        // T15 (V01): cuando la grilla va a dibujar una celda de torneo o equipo,
+        // muestra el nombre. El dato de fondo sigue siendo el ID, así que
+        // la selección de filas y Modificar funcionan igual que antes.
+        private void gridPartido_CellFormatting(
+            object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.Value is not int id) return;
+
+            string columna = gridPartido.Columns[e.ColumnIndex].DataPropertyName;
+
+            if (columna == "IdTorneo" &&
+                nombresTorneoPartido.TryGetValue(id, out string? torneo))
+            {
+                e.Value = torneo;
+                e.FormattingApplied = true;
+            }
+            else if ((columna == "IdEquipoLocal" || columna == "IdEquipoVisitante") &&
+                nombresEquipoPartido.TryGetValue(id, out string? equipo))
+            {
+                e.Value = equipo;
+                e.FormattingApplied = true;
             }
         }
 

@@ -756,15 +756,24 @@ namespace UI
 
         private void gridTorneo_SelectionChanged(object? sender, EventArgs e)
         {
-            if (gridTorneo.SelectedRows.Count > 0 && gridTorneo.SelectedRows[0].DataBoundItem is TorneoEntity torneo)
+            try
             {
-                idTorneoSeleccionado = torneo.IdTorneo;
-                TorneoNombre.Text = torneo.Nombre;
-                TorneoAño.Value = torneo.Año;
+                if (gridTorneo.SelectedRows.Count > 0 &&
+                    gridTorneo.SelectedRows[0].DataBoundItem is TorneoEntity torneo)
+                {
+                    idTorneoSeleccionado = torneo.IdTorneo;
+                    TorneoNombre.Text = torneo.Nombre;
+                    TorneoAño.Value = torneo.Año;
+                }
+                else
+                {
+                    idTorneoSeleccionado = 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
                 idTorneoSeleccionado = 0;
+                MostrarError(ex);
             }
         }
 

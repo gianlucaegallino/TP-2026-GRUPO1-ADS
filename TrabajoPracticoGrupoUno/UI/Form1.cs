@@ -30,6 +30,21 @@ namespace UI
 
         private void Form1_Load(object? sender, EventArgs e)
         {
+            try
+            {
+                // Prueba la conexión una sola vez antes de cargar las pestañas
+                using (var db = new DAL.Models.ModeloParcialContext())
+                {
+                    if (!db.Database.CanConnect())
+                        throw new Exception("No se pudo conectar a la base de datos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+                return; // no cargar las pestañas
+            }
+
             CargarPestanaPais();
             CargarPestanaEquipo();
             CargarPestanaJugador();
@@ -42,7 +57,20 @@ namespace UI
         // Muestra cualquier error de validación o de base de datos.
         private void MostrarError(Exception ex)
         {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            string mensaje = ex.Message;
+
+            // Revisa la excepción y sus internas buscando un error de SQL Server
+            for (Exception? e = ex; e != null; e = e.InnerException)
+            {
+                if (e is Microsoft.Data.SqlClient.SqlException)
+                {
+                    mensaje = "No se pudo conectar a la base de datos BDGrupoUnoFutbol.\n" +
+                              "Verifique que SQL Server esté en ejecución y que la base exista.";
+                    break;
+                }
+            }
+
+            MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void MostrarOk(string mensaje)

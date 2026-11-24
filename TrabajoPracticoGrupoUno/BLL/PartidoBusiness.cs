@@ -25,6 +25,10 @@ namespace BLL
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
+                    ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoLocal, tempEntity.Fecha, 0, "local");          
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoVisitante, tempEntity.Fecha, 0, "visitante");  
                     if (resultadoCargado) ValidarGoles(tempEntity.GolesLocal, tempEntity.GolesVisitante);
 
                     tempEntity.Activo = true;
@@ -54,6 +58,8 @@ namespace BLL
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoLocal, tempEntity.Fecha, 0, "local");
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoVisitante, tempEntity.Fecha, 0, "visitante");
                     if (resultadoCargado) ValidarGoles(tempEntity.GolesLocal, tempEntity.GolesVisitante);
 
                     PartidoDal.update(tempEntity, resultadoCargado);
@@ -77,6 +83,13 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     PartidoEntity actual = getById(id);
+
+                    if (!actual.Activo)   // se está reactivando
+                    {
+                        ValidarEquipoSinPartido(actual.IdEquipoLocal, actual.Fecha, id, "local");
+                        ValidarEquipoSinPartido(actual.IdEquipoVisitante, actual.Fecha, id, "visitante");
+                    }
+
                     PartidoDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
                 }
@@ -208,6 +221,20 @@ namespace BLL
             if (getById(id) == null)
             {
                 throw new Exception("El partido no existe.");
+            }
+        }
+        public void ValidarEquipoSinPartido(int idEquipo, DateTime fecha, int idPartidoActual, string rol)
+        {
+            List<PartidoEntity> partidos = getActivos();
+
+            bool yaJuega = partidos.Any(p =>
+                p.IdPartido != idPartidoActual &&
+                p.Fecha.Date == fecha.Date &&
+                (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
+
+            if (yaJuega)
+            {
+                throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
             }
         }
     }

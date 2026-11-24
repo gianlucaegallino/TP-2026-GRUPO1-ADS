@@ -225,17 +225,25 @@ namespace BLL
         }
         public void ValidarEquipoSinPartido(int idEquipo, DateTime fecha, int idPartidoActual, string rol)
         {
-            List<PartidoEntity> partidos = getActivos();
-
-            bool yaJuega = partidos.Any(p =>
-                p.IdPartido != idPartidoActual &&
-                p.Fecha.Date == fecha.Date &&
-                (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
-
-            if (yaJuega)
+            try
             {
-                throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
+                List<PartidoEntity> partidos = getActivos();
+
+                bool yaJuega = partidos.Any(p =>
+                    p.IdPartido != idPartidoActual &&
+                    p.Fecha.Date == fecha.Date &&
+                    (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
+
+                if (yaJuega)
+                {
+                    throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
+                }
             }
+            catch(Exception ex)
+            {
+                throw;
+            }
+            
         }
     }
 }

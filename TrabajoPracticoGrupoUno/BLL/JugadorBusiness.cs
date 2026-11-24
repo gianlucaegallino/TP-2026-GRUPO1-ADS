@@ -82,6 +82,10 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     JugadorEntity actual = getById(id);
+                    if (!actual.Activo)
+                    {
+                        ValidarDuplicados(actual);
+                    }
                     JugadorDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
                 }

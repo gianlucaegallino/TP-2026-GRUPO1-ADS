@@ -58,8 +58,8 @@ namespace BLL
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoLocal, "local");
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipoVisitante, "visitante");
-                    ValidarEquipoSinPartido(tempEntity.IdEquipoLocal, tempEntity.Fecha, 0, "local");
-                    ValidarEquipoSinPartido(tempEntity.IdEquipoVisitante, tempEntity.Fecha, 0, "visitante");
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoLocal, tempEntity.Fecha, tempEntity.IdPartido, "local");          
+                    ValidarEquipoSinPartido(tempEntity.IdEquipoVisitante, tempEntity.Fecha, tempEntity.IdPartido, "visitante");  
                     if (resultadoCargado) ValidarGoles(tempEntity.GolesLocal, tempEntity.GolesVisitante);
 
                     PartidoDal.update(tempEntity, resultadoCargado);
@@ -225,25 +225,17 @@ namespace BLL
         }
         public void ValidarEquipoSinPartido(int idEquipo, DateTime fecha, int idPartidoActual, string rol)
         {
-            try
-            {
-                List<PartidoEntity> partidos = getActivos();
+           List<PartidoEntity> partidos = getActivos();
 
-                bool yaJuega = partidos.Any(p =>
-                    p.IdPartido != idPartidoActual &&
-                    p.Fecha.Date == fecha.Date &&
-                    (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
+           bool yaJuega = partidos.Any(p =>
+           p.IdPartido != idPartidoActual &&
+           p.Fecha.Date == fecha.Date &&
+           (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
 
-                if (yaJuega)
-                {
-                    throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
-                }
-            }
-            catch(Exception ex)
+            if (yaJuega)
             {
-                throw;
-            }
-            
+                throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
+            }    
         }
     }
 }

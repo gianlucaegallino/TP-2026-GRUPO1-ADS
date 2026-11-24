@@ -27,6 +27,7 @@ namespace BLL
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipo);
                     ValidarPaisSeleccionado(tempEntity.IdPais);
                     ValidarExistenciaPaisActivo(tempEntity.IdPais);
+                    ValidarDuplicados(tempEntity);
 
                     tempEntity.Activo = true;
 
@@ -58,6 +59,7 @@ namespace BLL
                     ValidarExistenciaEquipoActivo(tempEntity.IdEquipo);
                     ValidarPaisSeleccionado(tempEntity.IdPais);
                     ValidarExistenciaPaisActivo(tempEntity.IdPais);
+                    ValidarDuplicados(tempEntity);
 
                     JugadorDal.update(tempEntity);
                     trx.Complete();
@@ -207,6 +209,27 @@ namespace BLL
             if (getById(id) == null)
             {
                 throw new Exception("El jugador no existe.");
+            }
+        }
+        public void ValidarDuplicados(JugadorEntity jugador)
+        {
+            List<JugadorEntity> activos = getActivos();
+
+            foreach (var j in activos)
+            {
+                if (j.IdJugador != jugador.IdJugador)
+                {       
+                    if (j.IdEquipo == jugador.IdEquipo && j.NumeroCamiseta == jugador.NumeroCamiseta)
+                    {
+                        throw new Exception("Ya existe un jugador activo en ese equipo con ese numero de camiseta.");
+                    }
+                    if (j.IdEquipo == jugador.IdEquipo &&
+                        j.Nombre.ToLower() == jugador.Nombre.ToLower() &&
+                        j.Apellido.ToLower() == jugador.Apellido.ToLower())
+                    {
+                        throw new Exception("Ya existe un jugador activo con el mismo nombre y apellido en ese equipo.");
+                    }
+                }
             }
         }
     }

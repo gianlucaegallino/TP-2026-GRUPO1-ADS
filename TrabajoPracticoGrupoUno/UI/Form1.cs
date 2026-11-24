@@ -537,31 +537,52 @@ namespace UI
 
         private void btnJugadorLimpiar_Click(object? sender, EventArgs e)
         {
-            LimpiarJugador();
+            try
+            {
+                LimpiarJugador();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void chkJugadorInactivos_CheckedChanged(
             object? sender, EventArgs e)
         {
-            CargarPestanaJugador();
+            try
+            {
+                CargarPestanaJugador();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         private void gridJugador_SelectionChanged(
             object? sender, EventArgs e)
         {
-            if (gridJugador.SelectedRows.Count > 0 &&
-                gridJugador.SelectedRows[0].DataBoundItem is JugadorEntity jugador)
+            try
             {
-                idJugadorSeleccionado = jugador.IdJugador;
-                JugadorNombre.Text = jugador.Nombre;
-                JugadorApellido.Text = jugador.Apellido;
-                JugadorNumeroCamiseta.Value = jugador.NumeroCamiseta;
-                JugadorIdEquipo.SelectedValue = jugador.IdEquipo;
-                JugadorIdPais.SelectedValue = jugador.IdPais;
+                if (gridJugador.SelectedRows.Count > 0 &&
+                    gridJugador.SelectedRows[0].DataBoundItem is JugadorEntity jugador)
+                {
+                    idJugadorSeleccionado = jugador.IdJugador;
+                    JugadorNombre.Text = jugador.Nombre;
+                    JugadorApellido.Text = jugador.Apellido;
+                    JugadorNumeroCamiseta.Value = jugador.NumeroCamiseta;
+                    JugadorIdEquipo.SelectedValue = jugador.IdEquipo;
+                    JugadorIdPais.SelectedValue = jugador.IdPais;
+                }
+                else
+                {
+                    idJugadorSeleccionado = 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                idJugadorSeleccionado = 0;
+                MostrarError(ex);
             }
         }
 
@@ -591,14 +612,21 @@ namespace UI
 
         private void LimpiarJugador()
         {
-            gridJugador.ClearSelection();
-            idJugadorSeleccionado = 0;
-            JugadorNombre.Clear();
-            JugadorApellido.Clear();
-            JugadorNumeroCamiseta.Value = JugadorNumeroCamiseta.Minimum;
-            JugadorIdEquipo.SelectedIndex = -1;
-            JugadorIdPais.SelectedIndex = -1;
-            JugadorNombre.Focus();
+            try
+            {
+                gridJugador.ClearSelection();
+                idJugadorSeleccionado = 0;
+                JugadorNombre.Clear();
+                JugadorApellido.Clear();
+                JugadorNumeroCamiseta.Value = JugadorNumeroCamiseta.Minimum;
+                JugadorIdEquipo.SelectedIndex = -1;
+                JugadorIdPais.SelectedIndex = -1;
+                JugadorNombre.Focus();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
         }
 
         // T15: cuando la grilla va a dibujar una celda de IdEquipo o IdPais,

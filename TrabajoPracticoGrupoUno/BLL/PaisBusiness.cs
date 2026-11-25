@@ -66,6 +66,10 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     PaisEntity actual = getById(id);
+                    if (actual.Activo)   // se está desactivando
+                    {
+                        ValidarSinJugadoresActivos(id);
+                    }
                     PaisDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
                 }
@@ -149,6 +153,17 @@ namespace BLL
             if (id <= 0)
             {
                 throw new Exception("Debe seleccionar un pais de la grilla.");
+            }
+        }
+
+        // JugadorBusiness se crea dentro del método (no como campo) para evitar una referencia
+        // circular de instancias: JugadorBusiness ya crea un PaisBusiness como campo.
+        public void ValidarSinJugadoresActivos(int idPais)
+        {
+            bool tieneJugadores = new JugadorBusiness().getActivos().Any(j => j.IdPais == idPais);
+            if (tieneJugadores)
+            {
+                throw new Exception("No se puede desactivar el pais porque tiene jugadores activos.");
             }
         }
 

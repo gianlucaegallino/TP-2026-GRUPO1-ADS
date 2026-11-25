@@ -68,6 +68,10 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     TorneoEntity actual = getById(id);
+                    if (actual.Activo)   // se está desactivando
+                    {
+                        ValidarSinPartidosActivos(id);
+                    }
                     TorneoDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
                 }
@@ -159,6 +163,17 @@ namespace BLL
             if (id <= 0)
             {
                 throw new Exception("Debe seleccionar un torneo de la grilla.");
+            }
+        }
+
+        // PartidoBusiness se crea dentro del método (no como campo) para evitar una referencia
+        // circular de instancias: PartidoBusiness ya crea un TorneoBusiness como campo.
+        public void ValidarSinPartidosActivos(int idTorneo)
+        {
+            bool tienePartidos = new PartidoBusiness().getActivos().Any(p => p.IdTorneo == idTorneo);
+            if (tienePartidos)
+            {
+                throw new Exception("No se puede desactivar el torneo porque tiene partidos activos.");
             }
         }
 

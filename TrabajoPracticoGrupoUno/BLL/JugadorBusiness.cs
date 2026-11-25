@@ -82,8 +82,10 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     JugadorEntity actual = getById(id);
-                    if (!actual.Activo)
+                    if (!actual.Activo)   // se está reactivando
                     {
+                        ValidarExistenciaEquipoActivo(actual.IdEquipo);
+                        ValidarExistenciaPaisActivo(actual.IdPais);
                         ValidarDuplicados(actual);
                     }
                     JugadorDal.cambiarEstado(id, !actual.Activo);
@@ -222,7 +224,7 @@ namespace BLL
             foreach (var j in activos)
             {
                 if (j.IdJugador != jugador.IdJugador)
-                {       
+                {
                     if (j.IdEquipo == jugador.IdEquipo && j.NumeroCamiseta == jugador.NumeroCamiseta)
                     {
                         throw new Exception("Ya existe un jugador activo en ese equipo con ese numero de camiseta.");

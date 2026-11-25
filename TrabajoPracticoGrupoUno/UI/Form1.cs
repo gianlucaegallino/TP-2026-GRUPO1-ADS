@@ -32,12 +32,7 @@ namespace UI
         {
             try
             {
-                // Prueba la conexión una sola vez antes de cargar las pestañas
-                using (var db = new DAL.Models.ModeloParcialContext())
-                {
-                    if (!db.Database.CanConnect())
-                        throw new Exception("No se pudo conectar a la base de datos.");
-                }
+                paisBusiness.ProbarConexion(); //Se elige pais business arbitrariamente. 
             }
             catch (Exception ex)
             {
@@ -64,7 +59,7 @@ namespace UI
             {
                 if (e is Microsoft.Data.SqlClient.SqlException)
                 {
-                    mensaje = "No se pudo conectar a la base de datos BDGrupoUnoFutbol.\n" +
+                    mensaje = "No se pudo conectar a la base de datos.\n" +
                               "Verifique que SQL Server esté en ejecución y que la base exista.";
                     break;
                 }

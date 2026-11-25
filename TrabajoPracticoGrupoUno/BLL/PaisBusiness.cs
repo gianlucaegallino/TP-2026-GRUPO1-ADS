@@ -130,6 +130,11 @@ namespace BLL
 
         //VALIDACIONES
 
+        public void ProbarConexion(){
+            if (!PaisDal.ProbarConexion()) {
+                throw new Exception("No se pudo conectar a la base de datos.");
+            }
+        }
         public void ValidarNombre(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre) || nombre.Length > 50)

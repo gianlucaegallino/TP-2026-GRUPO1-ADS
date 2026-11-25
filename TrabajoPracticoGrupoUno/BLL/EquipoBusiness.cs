@@ -71,7 +71,7 @@ namespace BLL
                     if (actual.Activo)   // se está desactivando
                     {
                         ValidarSinJugadoresActivos(id);
-                        ValidarSinPartidosFuturosActivos(id);
+                        ValidarSinPartidosActivos(id);
                     }
                     EquipoDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
@@ -187,15 +187,13 @@ namespace BLL
             }
         }
 
-        // Los partidos ya jugados no bloquean la baja: solo los de hoy en adelante.
-        public void ValidarSinPartidosFuturosActivos(int idEquipo)
+        public void ValidarSinPartidosActivos(int idEquipo)
         {
             bool tienePartidos = new PartidoBusiness().getActivos().Any(p =>
-                p.Fecha.Date >= DateTime.Today &&
-                (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
+                p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo);
             if (tienePartidos)
             {
-                throw new Exception("No se puede desactivar el equipo porque tiene partidos activos pendientes.");
+                throw new Exception("No se puede desactivar el equipo porque tiene partidos activos.");
             }
         }
     }

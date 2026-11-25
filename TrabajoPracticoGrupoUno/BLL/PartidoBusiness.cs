@@ -20,6 +20,7 @@ namespace BLL
                     // Validaciones
                     ValidarTorneoSeleccionado(tempEntity.IdTorneo);
                     ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
+                    ValidarFechaEnAnioDelTorneo(tempEntity.IdTorneo, tempEntity.Fecha);
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
@@ -51,6 +52,7 @@ namespace BLL
                     ValidarExistenciaPorID(tempEntity.IdPartido);
                     ValidarTorneoSeleccionado(tempEntity.IdTorneo);
                     ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
+                    ValidarFechaEnAnioDelTorneo(tempEntity.IdTorneo, tempEntity.Fecha);
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
@@ -169,6 +171,15 @@ namespace BLL
             if (!torneo.Activo)
             {
                 throw new Exception("El torneo seleccionado esta inactivo.");
+            }
+        }
+
+        public void ValidarFechaEnAnioDelTorneo(int idTorneo, DateTime fecha)
+        {
+            TorneoEntity torneo = TorneoBusiness.getById(idTorneo);
+            if (fecha.Year != torneo.Año)
+            {
+                throw new Exception($"La fecha del partido debe estar dentro del año del torneo ({torneo.Año}).");
             }
         }
 

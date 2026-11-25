@@ -114,9 +114,13 @@ namespace UI
                 gridPais.DataSource = null;
 
                 if (chkPaisInactivos.Checked)
+                {
                     gridPais.DataSource = paisBusiness.getAll();
+                }
                 else
+                {
                     gridPais.DataSource = paisBusiness.getActivos();
+                }
 
                 LimpiarPais();
             }
@@ -188,7 +192,7 @@ namespace UI
             {
                 LimpiarPais();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MostrarError(ex);
             }
@@ -290,7 +294,7 @@ namespace UI
                 {
                     gridEquipo.Columns["FechaFundacion"].DefaultCellStyle.Format = "dd/MM/yyyy";
                 }
-              
+
                 LimpiarEquipo();
             }
             catch (Exception ex)

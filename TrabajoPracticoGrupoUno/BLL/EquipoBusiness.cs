@@ -68,6 +68,11 @@ namespace BLL
                     ValidarExistenciaPorID(id);
 
                     EquipoEntity actual = getById(id);
+                    if (actual.Activo)   // se está desactivando
+                    {
+                        ValidarSinJugadoresActivos(id);
+                        ValidarSinPartidosActivos(id);
+                    }
                     EquipoDal.cambiarEstado(id, !actual.Activo);
                     trx.Complete();
                 }
@@ -167,6 +172,28 @@ namespace BLL
             if (getById(id) == null)
             {
                 throw new Exception("El equipo no existe.");
+            }
+        }
+
+        // Los business se crean dentro del método (y no como campo) para evitar una
+        // referencia circular de instancias: JugadorBusiness y PartidoBusiness ya
+        // crean un EquipoBusiness como campo.
+        public void ValidarSinJugadoresActivos(int idEquipo)
+        {
+            bool tieneJugadores = new JugadorBusiness().getActivos().Any(j => j.IdEquipo == idEquipo);
+            if (tieneJugadores)
+            {
+                throw new Exception("No se puede desactivar el equipo porque tiene jugadores activos.");
+            }
+        }
+
+        public void ValidarSinPartidosActivos(int idEquipo)
+        {
+            bool tienePartidos = new PartidoBusiness().getActivos().Any(p =>
+                p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo);
+            if (tienePartidos)
+            {
+                throw new Exception("No se puede desactivar el equipo porque tiene partidos activos.");
             }
         }
     }

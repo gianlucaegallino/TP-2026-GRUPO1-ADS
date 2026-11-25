@@ -138,5 +138,14 @@ namespace DAL
                 throw;
             }
         }
+
+        public bool ProbarConexion()
+        {
+            using (var db = new ModeloParcialContext())
+            {
+                return db.Database.CanConnect();
+
+            }
+        }
     }
 }

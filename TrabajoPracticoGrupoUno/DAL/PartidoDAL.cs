@@ -17,7 +17,7 @@ namespace DAL
 
                     if (resultadoCargado)
                     {
-                        nuevo.Fechafinpartido = DateTime.Now;
+                        nuevo.Fechafinpartido = nuevoEntity.FechaFinPartido;
                     }
                     else
                     {
@@ -43,6 +43,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     Partido item = db.Partido.FirstOrDefault(e => e.IdPartido == entity.IdPartido);
+
                     if (item != null)
                     {
                         item.IdTorneo = entity.IdTorneo;
@@ -54,12 +55,7 @@ namespace DAL
                         {
                             item.Goleslocal = entity.GolesLocal;
                             item.Golesvisitante = entity.GolesVisitante;
-
-                            // Si ya tenia fecha de fin se conserva: corregir los goles no cambia cuando termino
-                            if (item.Fechafinpartido == null)
-                            {
-                                item.Fechafinpartido = DateTime.Now;
-                            }
+                            item.Fechafinpartido = entity.FechaFinPartido;
                         }
                         else
                         {

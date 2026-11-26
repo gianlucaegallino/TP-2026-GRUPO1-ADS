@@ -33,8 +33,7 @@ namespace DAL
                     Pais item = db.Pais.FirstOrDefault(e => e.IdPais == entity.IdPais);
                     if (item != null)
                     {
-                        Pais cambios = PaisMapper.MapToModel(entity);
-                        item.Nombre = cambios.Nombre;
+                        item.Nombre = entity.Nombre;
                         db.SaveChanges();
                     }
                 }
@@ -72,7 +71,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Pais> list = db.Pais.ToList();
-                    return list.Select(PaisMapper.MapToEntity).ToList();
+                    return PaisMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -88,7 +87,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Pais> list = db.Pais.Where(e => e.Activo).ToList();
-                    return list.Select(PaisMapper.MapToEntity).ToList();
+                    return PaisMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -141,10 +140,16 @@ namespace DAL
 
         public bool ProbarConexion()
         {
-            using (var db = new ModeloParcialContext())
+            try
             {
-                return db.Database.CanConnect();
-
+                using (var db = new ModeloParcialContext())
+                {
+                    return db.Database.CanConnect();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

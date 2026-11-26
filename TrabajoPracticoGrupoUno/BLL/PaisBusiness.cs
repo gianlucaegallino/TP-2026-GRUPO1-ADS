@@ -14,7 +14,7 @@ namespace BLL
             {
                 using (var trx = new TransactionScope())
                 {
-                    tempEntity.Nombre = tempEntity.Nombre?.Trim() ?? "";
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
 
                     // Validaciones
                     ValidarNombre(tempEntity.Nombre);
@@ -38,7 +38,7 @@ namespace BLL
             {
                 using (var trx = new TransactionScope())
                 {
-                    tempEntity.Nombre = tempEntity.Nombre?.Trim() ?? "";
+                    tempEntity.Nombre = tempEntity.Nombre.Trim();
 
                     ValidarIdSeleccionado(tempEntity.IdPais);
                     ValidarExistenciaPorID(tempEntity.IdPais);
@@ -165,10 +165,14 @@ namespace BLL
         // circular de instancias: JugadorBusiness ya crea un PaisBusiness como campo.
         public void ValidarSinJugadoresActivos(int idPais)
         {
-            bool tieneJugadores = new JugadorBusiness().getActivos().Any(j => j.IdPais == idPais);
-            if (tieneJugadores)
+            List<JugadorEntity> jugadores = new JugadorBusiness().getActivos();
+
+            foreach (JugadorEntity j in jugadores)
             {
-                throw new Exception("No se puede desactivar el pais porque tiene jugadores activos.");
+                if (j.IdPais == idPais)
+                {
+                    throw new Exception("No se puede desactivar el pais porque tiene jugadores activos.");
+                }
             }
         }
 

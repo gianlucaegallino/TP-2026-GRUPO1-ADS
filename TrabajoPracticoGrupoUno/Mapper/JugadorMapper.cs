@@ -38,7 +38,15 @@ namespace Mapper
             };
         }
 
-
+        public static List<JugadorEntity> MapToEntity(List<Jugador> list)
+        {
+            List<JugadorEntity> entityList = new List<JugadorEntity>();
+            foreach (var item in list)
+            {
+                entityList.Add(MapToEntity(item));
+            }
+            return entityList;
+        }
     }
 }
 

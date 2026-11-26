@@ -45,18 +45,21 @@ namespace DAL
                     Partido item = db.Partido.FirstOrDefault(e => e.IdPartido == entity.IdPartido);
                     if (item != null)
                     {
-                        Partido cambios = PartidoMapper.MapToModel(entity);
-                        item.IdTorneo = cambios.IdTorneo;
-                        item.IdEquipoLocal = cambios.IdEquipoLocal;
-                        item.IdEquipoVisitante = cambios.IdEquipoVisitante;
-                        item.Fecha = cambios.Fecha;
+                        item.IdTorneo = entity.IdTorneo;
+                        item.IdEquipoLocal = entity.IdEquipoLocal;
+                        item.IdEquipoVisitante = entity.IdEquipoVisitante;
+                        item.Fecha = entity.Fecha;
 
                         if (resultadoCargado)
                         {
-                            item.Goleslocal = cambios.Goleslocal;
-                            item.Golesvisitante = cambios.Golesvisitante;
-                            // Si ya tenia fecha de fin se conserva, si no se registra ahora
-                            item.Fechafinpartido = item.Fechafinpartido ?? DateTime.Now;
+                            item.Goleslocal = entity.GolesLocal;
+                            item.Golesvisitante = entity.GolesVisitante;
+
+                            // Si ya tenia fecha de fin se conserva: corregir los goles no cambia cuando termino
+                            if (item.Fechafinpartido == null)
+                            {
+                                item.Fechafinpartido = DateTime.Now;
+                            }
                         }
                         else
                         {
@@ -102,7 +105,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Partido> list = db.Partido.ToList();
-                    return list.Select(PartidoMapper.MapToEntity).ToList();
+                    return PartidoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -118,7 +121,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Partido> list = db.Partido.Where(e => e.Activo).ToList();
-                    return list.Select(PartidoMapper.MapToEntity).ToList();
+                    return PartidoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -140,24 +143,6 @@ namespace DAL
                         return PartidoMapper.MapToEntity(item);
                     }
                     else return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public List<int> getIdsConResultado()
-        {
-            try
-            {
-                using (var db = new ModeloParcialContext())
-                {
-                    return db.Partido
-                        .Where(e => e.Goleslocal != null && e.Golesvisitante != null)
-                        .Select(e => e.IdPartido)
-                        .ToList();
                 }
             }
             catch (Exception ex)

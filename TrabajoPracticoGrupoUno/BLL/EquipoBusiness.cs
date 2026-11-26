@@ -180,20 +180,27 @@ namespace BLL
         // crean un EquipoBusiness como campo.
         public void ValidarSinJugadoresActivos(int idEquipo)
         {
-            bool tieneJugadores = new JugadorBusiness().getActivos().Any(j => j.IdEquipo == idEquipo);
-            if (tieneJugadores)
+            List<JugadorEntity> jugadores = new JugadorBusiness().getActivos();
+
+            foreach (JugadorEntity j in jugadores)
             {
-                throw new Exception("No se puede desactivar el equipo porque tiene jugadores activos.");
+                if (j.IdEquipo == idEquipo)
+                {
+                    throw new Exception("No se puede desactivar el equipo porque tiene jugadores activos.");
+                }
             }
         }
 
         public void ValidarSinPartidosActivos(int idEquipo)
         {
-            bool tienePartidos = new PartidoBusiness().getActivos().Any(p =>
-                p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo);
-            if (tienePartidos)
+            List<PartidoEntity> partidos = new PartidoBusiness().getActivos();
+
+            foreach (PartidoEntity p in partidos)
             {
-                throw new Exception("No se puede desactivar el equipo porque tiene partidos activos.");
+                if (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo)
+                {
+                    throw new Exception("No se puede desactivar el equipo porque tiene partidos activos.");
+                }
             }
         }
     }

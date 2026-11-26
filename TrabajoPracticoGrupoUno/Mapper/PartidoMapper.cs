@@ -43,5 +43,15 @@ namespace Mapper
 
             };
         }
+
+        public static List<PartidoEntity> MapToEntity(List<Partido> list)
+        {
+            List<PartidoEntity> entityList = new List<PartidoEntity>();
+            foreach (var item in list)
+            {
+                entityList.Add(MapToEntity(item));
+            }
+            return entityList;
+        }
     }
 }

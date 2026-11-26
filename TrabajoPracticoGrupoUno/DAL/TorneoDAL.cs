@@ -33,9 +33,8 @@ namespace DAL
                     Torneo item = db.Torneo.FirstOrDefault(e => e.IdTorneo == entity.IdTorneo);
                     if (item != null)
                     {
-                        Torneo cambios = TorneoMapper.MapToModel(entity);
-                        item.Nombre = cambios.Nombre;
-                        item.Año = cambios.Año;
+                        item.Nombre = entity.Nombre;
+                        item.Año = entity.Año;
                         db.SaveChanges();
                     }
                 }
@@ -74,7 +73,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Torneo> list = db.Torneo.ToList();
-                    return list.Select(TorneoMapper.MapToEntity).ToList();
+                    return TorneoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -90,7 +89,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Torneo> list = db.Torneo.Where(e => e.Activo).ToList();
-                    return list.Select(TorneoMapper.MapToEntity).ToList();
+                    return TorneoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -120,7 +119,6 @@ namespace DAL
             }
         }
 
-        // Un torneo se identifica por nombre + año (ej: "Copa Libertadores 2026")
         public TorneoEntity getByNombreYAnio(string nombre, int anio)
         {
             try

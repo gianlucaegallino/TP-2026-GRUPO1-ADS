@@ -851,7 +851,7 @@ namespace UI
         //            chkResultado, gridPartido, chkPartidoInactivos,
         //            btnPartidoGuardar, btnPartidoModificar, btnPartidoEstado, btnPartidoLimpiar
         // Negocio:   partidoBusiness.add(entity, resultadoCargado) / update(entity, resultadoCargado)
-        //            / cambiarEstado / getAll / getActivos / getById / getIdsConResultado
+        //            / cambiarEstado / getAll / getActivos / getById
         //            combos: torneoBusiness.getActivos(), equipoBusiness.getActivos()
         // ====================================================================
         #region Pestaña Partidos
@@ -1119,6 +1119,8 @@ namespace UI
 
                     PartidoFecha.Value = partido.Fecha;
 
+                    // Se usa FechaFinPartido y no los goles: un NULL en la base se lee como 0 (ver PartidoMapper),
+                    // asi que un 0 - 0 real se confundiria con un partido sin resultado.
                     chkResultado.Checked = partido.FechaFinPartido.HasValue;
 
                     PartidoGolesLocal.Value = partido.GolesLocal;

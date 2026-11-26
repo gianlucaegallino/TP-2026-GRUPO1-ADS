@@ -21,6 +21,7 @@ namespace BLL
                     ValidarTorneoSeleccionado(tempEntity.IdTorneo);
                     ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
                     ValidarFechaEnAnioDelTorneo(tempEntity.IdTorneo, tempEntity.Fecha);
+                    ValidarFechaFinPartido(tempEntity, resultadoCargado);
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
@@ -53,6 +54,7 @@ namespace BLL
                     ValidarTorneoSeleccionado(tempEntity.IdTorneo);
                     ValidarExistenciaTorneoActivo(tempEntity.IdTorneo);
                     ValidarFechaEnAnioDelTorneo(tempEntity.IdTorneo, tempEntity.Fecha);
+                    ValidarFechaFinPartido(tempEntity, resultadoCargado);
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoLocal, "local");
                     ValidarEquipoSeleccionado(tempEntity.IdEquipoVisitante, "visitante");
                     ValidarEquiposDistintos(tempEntity.IdEquipoLocal, tempEntity.IdEquipoVisitante);
@@ -84,11 +86,18 @@ namespace BLL
 
                     PartidoEntity actual = getById(id);
 
-                    if (!actual.Activo)   // se está reactivando
+                    if (!actual.Activo) // se está reactivando
                     {
                         ValidarExistenciaTorneoActivo(actual.IdTorneo);
+
+                        ValidarFechaEnAnioDelTorneo(actual.IdTorneo, actual.Fecha);
+
+                        ValidarFechaFinPartido(
+                            actual, actual.FechaFinPartido.HasValue);
+
                         ValidarExistenciaEquipoActivo(actual.IdEquipoLocal, "local");
                         ValidarExistenciaEquipoActivo(actual.IdEquipoVisitante, "visitante");
+
                         ValidarEquipoSinPartido(actual.IdEquipoLocal, actual.Fecha, id, "local");
                         ValidarEquipoSinPartido(actual.IdEquipoVisitante, actual.Fecha, id, "visitante");
                     }
@@ -168,6 +177,26 @@ namespace BLL
             if (fecha.Year != torneo.Año)
             {
                 throw new Exception($"La fecha del partido debe estar dentro del año del torneo ({torneo.Año}).");
+            }
+        }
+
+        public void ValidarFechaFinPartido(PartidoEntity partido, bool resultadoCargado)
+        {
+            if (resultadoCargado)
+            {
+                if (!partido.FechaFinPartido.HasValue)
+                {
+                    throw new Exception("Debe seleccionar la fecha de finalización del partido.");
+                }
+
+                if (partido.FechaFinPartido.Value <= partido.Fecha)
+                {
+                    throw new Exception("La fecha de finalización debe ser posterior a la fecha de inicio.");
+                }
+
+                ValidarFechaEnAnioDelTorneo(
+                    partido.IdTorneo,
+                    partido.FechaFinPartido.Value);
             }
         }
 

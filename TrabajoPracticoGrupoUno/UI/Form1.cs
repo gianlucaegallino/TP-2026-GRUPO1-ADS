@@ -953,6 +953,9 @@ namespace UI
 
             partido.Fecha = PartidoFecha.Value;
 
+            partido.FechaFinPartido = chkResultado.Checked
+                ? PartidoFechaFin.Value : null;
+
             partido.GolesLocal = (int)PartidoGolesLocal.Value;
             partido.GolesVisitante = (int)PartidoGolesVisitante.Value;
 
@@ -1044,11 +1047,17 @@ namespace UI
                 PartidoIdEquipoVisitante.SelectedIndex = -1;
 
                 PartidoFecha.Value = DateTime.Now;
+                PartidoFechaFin.Value = PartidoFecha.Value;
 
                 chkResultado.Checked = false;
 
+                PartidoFechaFin.Enabled = false;
+
                 PartidoGolesLocal.Value = 0;
                 PartidoGolesVisitante.Value = 0;
+
+                PartidoGolesLocal.Enabled = false;
+                PartidoGolesVisitante.Enabled = false;
 
                 gridPartido.ClearSelection();
             }
@@ -1078,11 +1087,13 @@ namespace UI
         {
             PartidoGolesLocal.Enabled = chkResultado.Checked;
             PartidoGolesVisitante.Enabled = chkResultado.Checked;
+            PartidoFechaFin.Enabled = chkResultado.Checked;
 
             if (!chkResultado.Checked)
             {
                 PartidoGolesLocal.Value = 0;
                 PartidoGolesVisitante.Value = 0;
+                PartidoFechaFin.Value = PartidoFecha.Value;
             }
         }
 
@@ -1119,9 +1130,12 @@ namespace UI
 
                     PartidoFecha.Value = partido.Fecha;
 
-                    // Se usa FechaFinPartido y no los goles: un NULL en la base se lee como 0 (ver PartidoMapper),
-                    // asi que un 0 - 0 real se confundiria con un partido sin resultado.
                     chkResultado.Checked = partido.FechaFinPartido.HasValue;
+
+                    PartidoFechaFin.Value =
+                        partido.FechaFinPartido ?? partido.Fecha;
+
+                    PartidoFechaFin.Enabled = chkResultado.Checked;
 
                     PartidoGolesLocal.Value = partido.GolesLocal;
                     PartidoGolesVisitante.Value = partido.GolesVisitante;

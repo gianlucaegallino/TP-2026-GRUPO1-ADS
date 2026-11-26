@@ -82,6 +82,8 @@
             chkPartidoInactivos = new CheckBox();
             gridPartido = new DataGridView();
             lblEstado = new Label();
+            PartidoFechaFin = new DateTimePicker();
+            label1 = new Label();
             pestanas.SuspendLayout();
             tabPais.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridPais).BeginInit();
@@ -615,6 +617,8 @@
             // 
             // tabPartido
             // 
+            tabPartido.Controls.Add(label1);
+            tabPartido.Controls.Add(PartidoFechaFin);
             tabPartido.Controls.Add(lblPartidoIdTorneo);
             tabPartido.Controls.Add(PartidoIdTorneo);
             tabPartido.Controls.Add(lblPartidoIdEquipoLocal);
@@ -691,24 +695,24 @@
             // 
             // lblPartidoFecha
             // 
-            lblPartidoFecha.Location = new Point(20, 90);
+            lblPartidoFecha.Location = new Point(20, 81);
             lblPartidoFecha.Name = "lblPartidoFecha";
             lblPartidoFecha.Size = new Size(270, 22);
             lblPartidoFecha.TabIndex = 6;
-            lblPartidoFecha.Text = "Fecha y hora";
+            lblPartidoFecha.Text = "Fecha y hora de inicio";
             // 
             // PartidoFecha
             // 
             PartidoFecha.CustomFormat = "dd/MM/yyyy HH:mm";
             PartidoFecha.Format = DateTimePickerFormat.Custom;
-            PartidoFecha.Location = new Point(20, 115);
+            PartidoFecha.Location = new Point(20, 107);
             PartidoFecha.Name = "PartidoFecha";
             PartidoFecha.Size = new Size(270, 25);
             PartidoFecha.TabIndex = 7;
             // 
             // lblPartidoGolesLocal
             // 
-            lblPartidoGolesLocal.Location = new Point(320, 90);
+            lblPartidoGolesLocal.Location = new Point(320, 81);
             lblPartidoGolesLocal.Name = "lblPartidoGolesLocal";
             lblPartidoGolesLocal.Size = new Size(270, 22);
             lblPartidoGolesLocal.TabIndex = 8;
@@ -716,7 +720,7 @@
             // 
             // PartidoGolesLocal
             // 
-            PartidoGolesLocal.Location = new Point(320, 115);
+            PartidoGolesLocal.Location = new Point(320, 107);
             PartidoGolesLocal.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
             PartidoGolesLocal.Name = "PartidoGolesLocal";
             PartidoGolesLocal.Size = new Size(270, 25);
@@ -724,7 +728,7 @@
             // 
             // lblPartidoGolesVisitante
             // 
-            lblPartidoGolesVisitante.Location = new Point(620, 90);
+            lblPartidoGolesVisitante.Location = new Point(620, 81);
             lblPartidoGolesVisitante.Name = "lblPartidoGolesVisitante";
             lblPartidoGolesVisitante.Size = new Size(270, 22);
             lblPartidoGolesVisitante.TabIndex = 10;
@@ -732,7 +736,7 @@
             // 
             // PartidoGolesVisitante
             // 
-            PartidoGolesVisitante.Location = new Point(620, 115);
+            PartidoGolesVisitante.Location = new Point(620, 106);
             PartidoGolesVisitante.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
             PartidoGolesVisitante.Name = "PartidoGolesVisitante";
             PartidoGolesVisitante.Size = new Size(270, 25);
@@ -740,7 +744,7 @@
             // 
             // chkResultado
             // 
-            chkResultado.Location = new Point(20, 160);
+            chkResultado.Location = new Point(320, 173);
             chkResultado.Name = "chkResultado";
             chkResultado.Size = new Size(270, 25);
             chkResultado.TabIndex = 12;
@@ -748,7 +752,7 @@
             // 
             // btnPartidoGuardar
             // 
-            btnPartidoGuardar.Location = new Point(20, 200);
+            btnPartidoGuardar.Location = new Point(20, 215);
             btnPartidoGuardar.Name = "btnPartidoGuardar";
             btnPartidoGuardar.Size = new Size(165, 34);
             btnPartidoGuardar.TabIndex = 13;
@@ -757,7 +761,7 @@
             // 
             // btnPartidoModificar
             // 
-            btnPartidoModificar.Location = new Point(195, 200);
+            btnPartidoModificar.Location = new Point(195, 215);
             btnPartidoModificar.Name = "btnPartidoModificar";
             btnPartidoModificar.Size = new Size(165, 34);
             btnPartidoModificar.TabIndex = 14;
@@ -766,7 +770,7 @@
             // 
             // btnPartidoEstado
             // 
-            btnPartidoEstado.Location = new Point(370, 200);
+            btnPartidoEstado.Location = new Point(370, 215);
             btnPartidoEstado.Name = "btnPartidoEstado";
             btnPartidoEstado.Size = new Size(165, 34);
             btnPartidoEstado.TabIndex = 15;
@@ -775,7 +779,7 @@
             // 
             // btnPartidoLimpiar
             // 
-            btnPartidoLimpiar.Location = new Point(545, 200);
+            btnPartidoLimpiar.Location = new Point(545, 215);
             btnPartidoLimpiar.Name = "btnPartidoLimpiar";
             btnPartidoLimpiar.Size = new Size(165, 34);
             btnPartidoLimpiar.TabIndex = 16;
@@ -784,7 +788,7 @@
             // 
             // chkPartidoInactivos
             // 
-            chkPartidoInactivos.Location = new Point(730, 205);
+            chkPartidoInactivos.Location = new Point(730, 220);
             chkPartidoInactivos.Name = "chkPartidoInactivos";
             chkPartidoInactivos.Size = new Size(175, 25);
             chkPartidoInactivos.TabIndex = 17;
@@ -798,14 +802,14 @@
             gridPartido.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridPartido.BackgroundColor = Color.White;
             gridPartido.ColumnHeadersHeight = 29;
-            gridPartido.Location = new Point(20, 250);
+            gridPartido.Location = new Point(20, 259);
             gridPartido.MultiSelect = false;
             gridPartido.Name = "gridPartido";
             gridPartido.ReadOnly = true;
             gridPartido.RowHeadersVisible = false;
             gridPartido.RowHeadersWidth = 51;
             gridPartido.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridPartido.Size = new Size(885, 250);
+            gridPartido.Size = new Size(885, 248);
             gridPartido.TabIndex = 18;
             // 
             // lblEstado
@@ -816,6 +820,24 @@
             lblEstado.Size = new Size(940, 30);
             lblEstado.TabIndex = 2;
             lblEstado.Text = "Seleccioná una pestaña. Guardar crea un registro; Modificar actualiza el seleccionado.";
+            // 
+            // PartidoFechaFin
+            // 
+            PartidoFechaFin.CustomFormat = "dd/MM/yyyy HH:mm";
+            PartidoFechaFin.Enabled = false;
+            PartidoFechaFin.Format = DateTimePickerFormat.Custom;
+            PartidoFechaFin.Location = new Point(20, 173);
+            PartidoFechaFin.Name = "PartidoFechaFin";
+            PartidoFechaFin.Size = new Size(250, 25);
+            PartidoFechaFin.TabIndex = 19;
+            // 
+            // label1
+            // 
+            label1.Location = new Point(20, 148);
+            label1.Name = "label1";
+            label1.Size = new Size(270, 22);
+            label1.TabIndex = 20;
+            label1.Text = "Fecha y hora de fin";
             // 
             // Form1
             // 
@@ -924,5 +946,7 @@
         private System.Windows.Forms.Button btnPartidoLimpiar;
         private System.Windows.Forms.CheckBox chkPartidoInactivos;
         private System.Windows.Forms.DataGridView gridPartido;
+        private Label label1;
+        private DateTimePicker PartidoFechaFin;
     }
 }

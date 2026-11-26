@@ -46,6 +46,7 @@ namespace BLL
                     ValidarNombre(tempEntity.Nombre);
                     ValidarAnio(tempEntity.Año);
                     ValidarInexistenciaPorNombreYAnio(tempEntity.Nombre, tempEntity.Año, tempEntity.IdTorneo);
+                    ValidarCambioDeAnio(tempEntity.IdTorneo, tempEntity.Año);
 
                     TorneoDal.update(tempEntity);
                     trx.Complete();
@@ -177,6 +178,24 @@ namespace BLL
                 if (p.IdTorneo == idTorneo)
                 {
                     throw new Exception("No se puede desactivar el torneo porque tiene partidos activos.");
+                }
+            }
+        }
+
+        // PartidoBusiness se crea dentro del método (no como campo), igual que en ValidarSinPartidosActivos.
+        public void ValidarCambioDeAnio(int idTorneo, int anioNuevo)
+        {
+            TorneoEntity actual = getById(idTorneo);
+            if (actual.Año != anioNuevo)
+            {
+                List<PartidoEntity> partidos = new PartidoBusiness().getAll();
+
+                foreach (PartidoEntity p in partidos)
+                {
+                    if (p.IdTorneo == idTorneo)
+                    {
+                        throw new Exception("No se puede cambiar el año del torneo porque tiene partidos cargados.");
+                    }
                 }
             }
         }

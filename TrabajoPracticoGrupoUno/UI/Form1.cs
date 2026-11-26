@@ -1165,6 +1165,18 @@ namespace UI
         private void gridPartido_CellFormatting(
             object? sender, DataGridViewCellFormattingEventArgs e)
         {
+            // Un partido sin resultado guarda los goles en NULL, pero el Mapper los convierte a 0:
+            // se muestra "-" para no confundirlo con un 0 a 0 real.
+            string col = gridPartido.Columns[e.ColumnIndex].DataPropertyName;
+            if ((col == "GolesLocal" || col == "GolesVisitante") &&
+                gridPartido.Rows[e.RowIndex].DataBoundItem is PartidoEntity p &&
+                !p.FechaFinPartido.HasValue)
+            {
+                e.Value = "-";
+                e.FormattingApplied = true;
+                return;
+            }
+
             if (e.Value is not int id) return;
 
             string columna = gridPartido.Columns[e.ColumnIndex].DataPropertyName;

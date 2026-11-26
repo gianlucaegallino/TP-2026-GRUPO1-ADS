@@ -194,6 +194,11 @@ namespace BLL
                     throw new Exception("La fecha de finalización debe ser posterior a la fecha de inicio.");
                 }
 
+                if (partido.FechaFinPartido.Value > DateTime.Now)
+                {
+                    throw new Exception("No se puede cargar el resultado de un partido que todavía no terminó.");
+                }
+
                 ValidarFechaEnAnioDelTorneo(
                     partido.IdTorneo,
                     partido.FechaFinPartido.Value);

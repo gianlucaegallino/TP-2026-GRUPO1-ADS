@@ -170,10 +170,14 @@ namespace BLL
         // circular de instancias: PartidoBusiness ya crea un TorneoBusiness como campo.
         public void ValidarSinPartidosActivos(int idTorneo)
         {
-            bool tienePartidos = new PartidoBusiness().getActivos().Any(p => p.IdTorneo == idTorneo);
-            if (tienePartidos)
+            List<PartidoEntity> partidos = new PartidoBusiness().getActivos();
+
+            foreach (PartidoEntity p in partidos)
             {
-                throw new Exception("No se puede desactivar el torneo porque tiene partidos activos.");
+                if (p.IdTorneo == idTorneo)
+                {
+                    throw new Exception("No se puede desactivar el torneo porque tiene partidos activos.");
+                }
             }
         }
 

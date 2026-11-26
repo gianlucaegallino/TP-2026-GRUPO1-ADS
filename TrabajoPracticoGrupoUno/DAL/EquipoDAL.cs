@@ -73,7 +73,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Equipo> list = db.Equipo.ToList();
-                    return list.Select(EquipoMapper.MapToEntity).ToList();
+                    return EquipoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Equipo> list = db.Equipo.Where(e => e.Activo).ToList();
-                    return list.Select(EquipoMapper.MapToEntity).ToList();
+                    return EquipoMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)

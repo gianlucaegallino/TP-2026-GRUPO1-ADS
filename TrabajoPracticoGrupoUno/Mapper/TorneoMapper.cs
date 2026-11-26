@@ -31,6 +31,16 @@ namespace Mapper
                 };
             }
         
+
+        public static List<TorneoEntity> MapToEntity(List<Torneo> list)
+        {
+            List<TorneoEntity> entityList = new List<TorneoEntity>();
+            foreach (var item in list)
+            {
+                entityList.Add(MapToEntity(item));
+            }
+            return entityList;
+        }
     }
 }
 

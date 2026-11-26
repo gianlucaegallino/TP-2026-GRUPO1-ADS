@@ -33,12 +33,11 @@ namespace DAL
                     Jugador item = db.Jugador.FirstOrDefault(e => e.IdJugador == entity.IdJugador);
                     if (item != null)
                     {
-                        Jugador cambios = JugadorMapper.MapToModel(entity);
-                        item.Nombre = cambios.Nombre;
-                        item.Apellido = cambios.Apellido;
-                        item.Numerocamiseta = cambios.Numerocamiseta;
-                        item.IdEquipo = cambios.IdEquipo;
-                        item.IdPais = cambios.IdPais;
+                        item.Nombre = entity.Nombre;
+                        item.Apellido = entity.Apellido;
+                        item.Numerocamiseta = entity.NumeroCamiseta;
+                        item.IdEquipo = entity.IdEquipo;
+                        item.IdPais = entity.IdPais;
                         db.SaveChanges();
                     }
                 }
@@ -76,7 +75,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Jugador> list = db.Jugador.ToList();
-                    return list.Select(JugadorMapper.MapToEntity).ToList();
+                    return JugadorMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)
@@ -92,7 +91,7 @@ namespace DAL
                 using (var db = new ModeloParcialContext())
                 {
                     List<Jugador> list = db.Jugador.Where(e => e.Activo).ToList();
-                    return list.Select(JugadorMapper.MapToEntity).ToList();
+                    return JugadorMapper.MapToEntity(list);
                 }
             }
             catch (Exception ex)

@@ -33,6 +33,16 @@ namespace Mapper
                 Activo = origen.Activo
             };
         }
+
+        public static List<EquipoEntity> MapToEntity(List<Equipo> list)
+        {
+            List<EquipoEntity> entityList = new List<EquipoEntity>();
+            foreach (var item in list)
+            {
+                entityList.Add(MapToEntity(item));
+            }
+            return entityList;
+        }
     }
 }
     

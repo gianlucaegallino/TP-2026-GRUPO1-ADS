@@ -139,18 +139,6 @@ namespace BLL
             }
         }
 
-        public List<int> getIdsConResultado()
-        {
-            try
-            {
-                return PartidoDal.getIdsConResultado();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
         //VALIDACIONES
 
         public void ValidarTorneoSeleccionado(int idTorneo)
@@ -235,18 +223,21 @@ namespace BLL
                 throw new Exception("El partido no existe.");
             }
         }
+        // Un equipo no puede jugar dos partidos activos el mismo DIA (se compara solo la fecha, no la hora).
+        // idPartidoActual = 0 al agregar; al modificar o reactivar se pasa el id para ignorar el propio partido.
+        // rol ("local"/"visitante") solo se usa para armar el mensaje de error.
         public void ValidarEquipoSinPartido(int idEquipo, DateTime fecha, int idPartidoActual, string rol)
         {
             List<PartidoEntity> partidos = getActivos();
 
-            bool yaJuega = partidos.Any(p =>
-            p.IdPartido != idPartidoActual &&
-            p.Fecha.Date == fecha.Date &&
-            (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo));
-
-            if (yaJuega)
+            foreach (PartidoEntity p in partidos)
             {
-                throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
+                if (p.IdPartido != idPartidoActual &&
+                    p.Fecha.Date == fecha.Date &&
+                    (p.IdEquipoLocal == idEquipo || p.IdEquipoVisitante == idEquipo))
+                {
+                    throw new Exception($"El equipo {rol} ya tiene un partido en esa fecha.");
+                }
             }
         }
     }

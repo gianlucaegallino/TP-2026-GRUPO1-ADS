@@ -29,5 +29,15 @@ namespace Mapper
                 Activo = origen.Activo
             };
         }
+
+        public static List<PaisEntity> MapToEntity(List<Pais> list)
+        {
+            List<PaisEntity> entityList = new List<PaisEntity>();
+            foreach (var item in list)
+            {
+                entityList.Add(MapToEntity(item));
+            }
+            return entityList;
+        }
     }
 }

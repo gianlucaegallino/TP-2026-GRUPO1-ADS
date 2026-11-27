@@ -512,8 +512,3 @@ classDiagram
 
 Particularidades: `PaisBusiness` y `PaisDAL` tienen además `ProbarConexion()`, que se usa al abrir el programa; `PartidoBusiness` y `PartidoDAL` reciben un parámetro `resultadoCargado` en `add` y `update`; `TorneoDAL` tiene `getByNombreYAnio` y `PaisDAL`/`EquipoDAL` tienen `getByNombre`.
 
----
-
-### Pendiente para completar este documento
-
-- Grabar los GIFs de los casos de uso CU-01 a CU-21 y guardarlos en `docs/gifs/` con los nombres indicados.
